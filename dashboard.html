@@ -853,7 +853,312 @@ function printBPI(demandeId, bpiId) {
   const imgs      = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
   const bpiIndex  = (d.bpis||[]).findIndex(x => x.id === bpiId) + 1;
   const livraison = d.livraison ? new Date(d.livraison+'T00:00:00').toLocaleDateString('fr-FR') : '—';
+  const expedition = { a_emporter:'À emporter', a_livrer:'À livrer', tnt:'TNT' }[d.expedition] || '—';
   const dateImpression = new Date().toLocaleDateString('fr-FR');
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <title>BPI ${d.commande} #${String(bpiIndex).padStart(2,'0')}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+    @page { size: A4 landscape; margin: 0; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #000;
+      width: 297mm;
+      height: 210mm;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: white;
+    }
+
+    /* ── Bandeau supérieur : fond blanc, bordure noire en bas ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 18px;
+      border-bottom: 2px solid #000;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #000;
+    }
+    .logo em { color: #000; font-style: normal; text-decoration: underline; text-underline-offset: 3px; }
+    .top-center {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .top-bpi {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #000;
+      letter-spacing: -0.02em;
+      text-align: right;
+    }
+    .top-bpi small {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: #777;
+      letter-spacing: 0;
+    }
+
+    /* ── Corps : 2 colonnes ── */
+    .body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Colonne gauche (33%) ── */
+    .col-left {
+      width: 33%;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #000;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .field-block:last-of-type { border-bottom: none; }
+    .field-block.no-border { border-bottom: none; }
+
+    .field-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    .field-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #000;
+      line-height: 1.1;
+      word-break: break-word;
+    }
+    .f-xl  { font-size: 24px; }
+    .f-lg  { font-size: 20px; }
+    .f-md  { font-size: 16px; }
+    .f-sm  { font-size: 13px; font-weight: 600; }
+    .f-acc { border-bottom: 3px solid #000; display: inline-block; padding-bottom: 1px; }
+    .f-mono { font-family: 'DM Mono', monospace; font-weight: 500; }
+
+    /* Finition — encadré noir, pas de fond */
+    .finition-block {
+      margin-top: auto;
+      border: 2px solid #000;
+      padding: 7px 10px;
+      flex-shrink: 0;
+    }
+    .finition-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2px;
+    }
+    .finition-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.2;
+    }
+
+    /* ── Colonne droite (67%) ── */
+    .col-right {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .visuel-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .visuels-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+      align-content: flex-start;
+      overflow: hidden;
+    }
+
+    .visuel-img {
+      border: 1px solid #ccc;
+      object-fit: contain;
+      background: white;
+    }
+
+    .no-visuel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #ccc;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #bbb;
+    }
+
+    /* Commentaire — bordure gauche noire, pas de fond */
+    .comment-strip {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-left: 3px solid #000;
+      font-size: 11px;
+      color: #333;
+      flex-shrink: 0;
+    }
+    .comment-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #888;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bandeau top -->
+  <div class="topbar">
+    <div class="logo">Print<em>Flow</em></div>
+    <div class="top-center">
+      ${d.commande} · Livraison : ${livraison}<br>
+      Expédition : ${expedition} · Imprimé le ${dateImpression}
+    </div>
+    <div class="top-bpi">
+      BPI #${String(bpiIndex).padStart(2,'0')}
+      <small>${d.statut === 'en_cours' ? 'EN COURS' : 'PRODUIT'}</small>
+    </div>
+  </div>
+
+  <!-- Corps -->
+  <div class="body">
+
+    <!-- Colonne gauche -->
+    <div class="col-left">
+
+      <div class="field-block">
+        <span class="field-lbl">Client</span>
+        <span class="field-val f-xl">${b.client||d.client}</span>
+      </div>
+
+      <div class="field-block">
+        <span class="field-lbl">N° Commande</span>
+        <span class="field-val f-lg f-mono f-acc">${d.commande}</span>
+      </div>
+
+      <div class="field-block">
+        <span class="field-lbl">Matière</span>
+        <span class="field-val f-lg">${b.matiere}</span>
+      </div>
+
+      <div class="field-block">
+        <span class="field-lbl">Format</span>
+        <span class="field-val f-md">${b.formatL} × ${b.formatH}</span>
+      </div>
+
+      ${b.epaisseur ? `
+      <div class="field-block">
+        <span class="field-lbl">Épaisseur</span>
+        <span class="field-val f-sm">${b.epaisseur}</span>
+      </div>` : ''}
+
+      <div class="field-block">
+        <div style="display:flex;gap:24px;align-items:flex-end;">
+          ${b.modeles ? `
+          <div>
+            <span class="field-lbl">Modèles</span>
+            <span class="field-val f-xl">${b.modeles} <span style="font-size:14px;font-weight:600;color:#666;">mod.</span></span>
+          </div>` : ''}
+          <div>
+            <span class="field-lbl">Exemplaires</span>
+            <span class="field-val f-xl">${b.exemplaires} <span style="font-size:14px;font-weight:600;color:#666;">ex.</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <span class="field-lbl">Expédition</span>
+        <span class="field-val f-sm">${expedition}</span>
+      </div>
+
+      ${b.finition ? `
+      <div class="finition-block">
+        <div class="finition-lbl">Finition</div>
+        <div class="finition-val">${b.finition}</div>
+      </div>` : ''}
+
+    </div>
+
+    <!-- Colonne droite — visuels -->
+    <div class="col-right">
+      ${imgs.length ? `
+        <div class="visuel-lbl">Visuels (${imgs.length})</div>
+        <div class="visuels-grid">
+          ${imgs.map(src => {
+            const sz  = imgs.length === 1 ? '100%'  : imgs.length <= 2 ? 'calc(50% - 4px)' : imgs.length <= 4 ? 'calc(50% - 4px)' : 'calc(33% - 6px)';
+            const mxH = imgs.length === 1 ? '100%'  : imgs.length <= 2 ? '100%'            : '48%';
+            return `<img class="visuel-img" src="${src}" style="width:${sz};max-height:${mxH};object-fit:contain;" alt=""/>`;
+          }).join('')}
+        </div>` :
+        `<div class="no-visuel">Aucun visuel fourni</div>`
+      }
+    </div>
+
+  </div>
+
+</body>
+</html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 600);
+}
 
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html>
