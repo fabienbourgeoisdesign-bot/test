@@ -1127,6 +1127,12 @@ function printBPI(demandeId, bpiId) {
         <span class="field-val f-sm">${expedition}</span>
       </div>
 
+      ${b.commentaire ? `
+      <div class="field-block">
+        <span class="field-lbl">Commentaire</span>
+        <span class="field-val f-sm" style="font-weight:500;line-height:1.4;">${b.commentaire}</span>
+      </div>` : ''}
+
       ${b.finition ? `
       <div class="finition-block">
         <div class="finition-lbl">Finition</div>
