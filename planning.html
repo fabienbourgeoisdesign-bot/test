@@ -7,9 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="printflow.css">
-  <style>
-    body { display: flex; }
-  </style>
 </head>
 <body>
 
@@ -85,6 +82,22 @@
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- ══ NAVIGATION MOBILE ══ -->
+<nav class="mobile-nav">
+  <a class="mobile-nav-item" href="dashboard.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
+    Demandes
+  </a>
+  <a class="mobile-nav-item active" href="planning.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Planning
+  </a>
+  <a class="mobile-nav-item" href="index.html" onclick="logout();return false;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+    Quitter
+  </a>
+</nav>
 
 <!-- ══ MODALE DÉTAIL ══ -->
 <div class="overlay" id="overlay-detail">

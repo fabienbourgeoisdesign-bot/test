@@ -6,309 +6,7 @@
   <title>PrintFlow — Tableau de bord</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --ink:     #0f0e0d;
-      --paper:   #f5f0e8;
-      --accent:  #e84c2b;
-      --blue:    #2b6de8;
-      --green:   #1a9e5c;
-      --yellow:  #d4920a;
-      --muted:   #8a867e;
-      --border:  #d4cfc6;
-      --white:   #ffffff;
-      --sidebar: 220px;
-    }
-
-    body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
-
-    /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar); background: var(--ink); color: white;
-      display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto;
-    }
-    .sidebar-logo {
-      padding: 26px 22px 20px; border-bottom: 1px solid #252321;
-      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-    }
-    .logo-sq { width: 32px; height: 32px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .logo-sq svg { width: 17px; height: 17px; fill: white; }
-    .logo-name { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
-    .logo-name em { color: var(--accent); font-style: normal; }
-
-    .sidebar-nav { padding: 16px 0; flex: 1; }
-    .nav-section { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #3e3c3a; padding: 0 22px; margin: 16px 0 6px; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px; padding: 9px 22px;
-      font-size: 13.5px; color: #9a9490; cursor: pointer;
-      border-left: 3px solid transparent; transition: background .12s, color .12s; user-select: none;
-    }
-    .nav-item:hover  { background: #1c1a18; color: #d4d0ca; }
-    .nav-item.active { background: #1c1a18; color: white; border-left-color: var(--accent); }
-    .nav-item svg    { width: 15px; height: 15px; flex-shrink: 0; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-    .dot-brouillon { background: var(--muted); }
-    .dot-en_cours  { background: var(--yellow); }
-    .dot-produit   { background: var(--blue); }
-    .dot-expedie   { background: var(--green); }
-
-    .sidebar-user { padding: 18px 22px; border-top: 1px solid #252321; flex-shrink: 0; }
-    .user-name  { font-size: 13px; font-weight: 600; color: white; margin-bottom: 2px; }
-    .user-email { font-size: 12px; color: #6a6460; }
-    .btn-logout {
-      margin-top: 12px; width: 100%; padding: 8px; background: transparent;
-      border: 1px solid #303030; color: #5a5654;
-      font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; letter-spacing: .04em;
-      transition: border-color .15s, color .15s;
-    }
-    .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── Main ── */
-    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-    .topbar {
-      height: 62px; padding: 0 30px;
-      background: var(--white); border-bottom: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-
-    /* ── Indicateur de connexion Firebase ── */
-    .fb-status {
-      display: flex; align-items: center; gap: 6px;
-      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
-    }
-    .fb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
-    .fb-dot.ok    { background: var(--green); }
-    .fb-dot.error { background: var(--accent); }
-
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
-      background: var(--ink); color: white;
-      font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 13px; font-weight: 700;
-      border: 2px solid var(--ink); cursor: pointer; letter-spacing: .01em; line-height: 1.2;
-      transition: background .15s, border-color .15s;
-    }
-    .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
-    .btn-primary svg { width: 15px; height: 15px; }
-
-    .btn-secondary {
-      padding: 8px 14px; background: transparent; color: var(--ink);
-      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-      border: 1.5px solid var(--border); cursor: pointer; transition: border-color .15s;
-    }
-    .btn-secondary:hover { border-color: var(--ink); }
-
-    /* Filtres */
-    .filters-bar {
-      padding: 16px 30px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-      border-bottom: 1px solid var(--border); background: var(--paper);
-    }
-    .search-wrap {
-      display: flex; align-items: center; gap: 8px;
-      background: white; border: 1.5px solid var(--border);
-      padding: 8px 12px; flex: 1; min-width: 180px; max-width: 320px;
-    }
-    .search-wrap svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
-    .search-wrap input { border: none; background: transparent; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); width: 100%; }
-
-    .f-select {
-      padding: 8px 30px 8px 12px;
-      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;
-      border: 1.5px solid var(--border);
-      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
-      appearance: none; outline: none; cursor: pointer;
-    }
-    .count-lbl { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
-
-    .content { padding: 22px 30px; flex: 1; }
-    .requests-list { display: flex; flex-direction: column; gap: 18px; }
-
-    /* ── Cartes ── */
-    .req-card { background: white; border: 1.5px solid var(--border); transition: border-color .18s, box-shadow .18s; }
-    .req-card:hover { border-color: #b8b3aa; box-shadow: 3px 3px 0 #d4cfc6; }
-
-    .card-head { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; user-select: none; }
-    .card-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .card-thumb { width: 42px; height: 42px; object-fit: cover; border: 1.5px solid var(--border); flex-shrink: 0; background: var(--paper); }
-
-    .card-meta  { flex: 1; min-width: 0; }
-    .card-num   { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-client{ font-size: 12px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-info  { font-size: 11px; color: #b0aba3; font-family: 'DM Mono', monospace; margin-top: 2px; }
-
-    .card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-    .pill { padding: 3px 9px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; border: 1px solid; }
-    .pill-brouillon { color: var(--muted);   border-color: var(--muted);   background: #f4f3f1; }
-    .pill-en_cours  { color: var(--yellow);  border-color: var(--yellow);  background: #fef8ec; }
-    .pill-produit   { color: var(--blue);    border-color: var(--blue);    background: #edf2fd; }
-    .pill-expedie   { color: var(--green);   border-color: var(--green);   background: #e8f7f0; }
-
-    .bpi-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
-    .bpi-badge svg { width: 11px; height: 11px; }
-
-    .btn-del {
-      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-      background: transparent; border: 1.5px solid var(--border); color: var(--muted); cursor: pointer; transition: all .14s;
-    }
-    .btn-del:hover { background: #fde8e4; border-color: var(--accent); color: var(--accent); }
-    .btn-del svg { width: 13px; height: 13px; }
-
-    .chevron { color: var(--muted); flex-shrink: 0; transition: transform .25s; }
-    .chevron svg { width: 15px; height: 15px; display: block; }
-    .chevron.open { transform: rotate(180deg); }
-
-    .card-body { display: none; border-top: 1.5px solid var(--border); }
-    .card-body.open { display: block; }
-    .card-cols { display: grid; grid-template-columns: 1fr 1fr; }
-    .col { padding: 18px 20px; border-right: 1px solid var(--border); }
-    .col:last-child { border-right: none; }
-
-    .col-title {
-      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-    }
-    .detail-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; font-size: 13px; gap: 8px; }
-    .dl { color: var(--muted); flex-shrink: 0; }
-    .dv { font-weight: 600; text-align: right; }
-    .dv.mono { font-family: 'DM Mono', monospace; color: var(--accent); }
-
-    .status-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
-    .s-btn { padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 11px; background: white; border: 1.5px solid var(--border); cursor: pointer; transition: all .12s; }
-    .s-btn:hover { border-color: var(--ink); background: var(--paper); }
-    .s-btn.on { background: var(--ink); color: white; border-color: var(--ink); }
-
-    /* BPI */
-    .bpi-list { display: flex; flex-direction: column; gap: 8px; }
-    .bpi-item { background: var(--paper); border: 1px solid var(--border); padding: 12px 14px; }
-    .bpi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .bpi-num  { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--accent); }
-    .bpi-right { display: flex; align-items: center; gap: 8px; }
-    .bpi-type-badge { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; border: 1px solid var(--border); color: var(--muted); }
-    .btn-edit-bpi {
-      display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px;
-      background: transparent; border: 1px solid var(--border); color: var(--muted);
-      font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; transition: all .12s;
-    }
-    .btn-edit-bpi:hover { border-color: var(--blue); color: var(--blue); background: #edf2fd; }
-    .btn-edit-bpi svg { width: 11px; height: 11px; }
-
-    .bpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; font-size: 12px; }
-    .bpi-f { display: flex; gap: 5px; }
-    .bpi-fl { color: var(--muted); flex-shrink: 0; }
-    .bpi-fv { font-weight: 600; }
-
-    .bpi-comment { margin-top: 8px; padding: 7px 10px; background: white; border: 1px solid var(--border); border-left: 3px solid var(--blue); font-size: 12px; color: var(--muted); }
-    .bpi-comment strong { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--blue); display: block; margin-bottom: 3px; }
-    .bpi-preview { margin-top: 8px; border: 1px solid var(--border); background: white; }
-    .bpi-preview img { max-width: 100%; max-height: 100px; object-fit: contain; display: block; }
-
-    .btn-add-bpi {
-      width: 100%; margin-top: 10px; padding: 9px;
-      background: transparent; border: 1.5px dashed var(--border); color: var(--muted);
-      font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; transition: all .14s;
-    }
-    .btn-add-bpi:hover { border-color: var(--ink); color: var(--ink); background: white; }
-
-    /* Chat */
-    .chat-col { padding: 18px 20px; border-top: 1px solid var(--border); grid-column: 1 / -1; }
-    .chat-msgs { max-height: 190px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-    .chat-msg { display: flex; gap: 10px; }
-    .chat-av { width: 28px; height: 28px; flex-shrink: 0; background: var(--ink); color: white; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 10px; }
-    .chat-body { flex: 1; }
-    .chat-author { font-weight: 700; font-size: 12px; }
-    .chat-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-left: 7px; }
-    .chat-text { font-size: 13px; margin-top: 2px; line-height: 1.5; color: var(--ink); }
-    .chat-input-row { display: flex; gap: 8px; }
-    .chat-inp { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); background: var(--paper); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color .15s, background .15s; }
-    .chat-inp:focus { border-color: var(--ink); background: white; }
-    .btn-send { padding: 9px 14px; background: var(--ink); color: white; border: none; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .14s; }
-    .btn-send:hover { background: var(--accent); }
-    .btn-send svg { width: 13px; height: 13px; }
-
-    /* Modales */
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,14,13,.65); backdrop-filter: blur(3px); z-index: 200; align-items: center; justify-content: center; }
-    .overlay.show { display: flex; }
-    .modal {
-      background: white; border: 2px solid var(--ink); box-shadow: 10px 10px 0 var(--ink);
-      width: 580px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-      animation: pop .22s cubic-bezier(.16,1,.3,1) both;
-    }
-    .modal.wide { width: 660px; }
-    @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-    .modal-head { padding: 22px 26px 18px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .modal-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
-    .modal-close { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1.5px solid var(--border); cursor: pointer; transition: all .12s; }
-    .modal-close:hover { background: var(--ink); color: white; border-color: var(--ink); }
-    .modal-close svg { width: 13px; height: 13px; }
-    .modal-body { padding: 22px 26px; }
-    .modal-foot { padding: 14px 26px 22px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
-
-    /* Formulaire */
-    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .ff { display: flex; flex-direction: column; gap: 6px; }
-    .ff.full { grid-column: 1 / -1; }
-    .ff label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
-    .ff label em { color: var(--accent); font-style: normal; font-size: 9px; margin-left: 4px; }
-
-    .fi, .fs, .ft {
-      padding: 10px 13px; border: 1.5px solid var(--border); background: var(--paper);
-      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
-      outline: none; width: 100%; transition: border-color .15s, background .15s;
-    }
-    .fi:focus, .fs:focus, .ft:focus { border-color: var(--ink); background: white; }
-    .fs {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 12px center; padding-right: 30px; background-color: var(--paper);
-    }
-    .ft { resize: vertical; min-height: 72px; }
-    .fi-ro { padding: 10px 13px; background: #edeae3; border: 1.5px solid var(--border); font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
-    .fi-ro svg { width: 12px; height: 12px; flex-shrink: 0; }
-    .inp-cm { position: relative; display: flex; align-items: center; }
-    .inp-cm input { padding-right: 36px; }
-    .inp-cm span { position: absolute; right: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); pointer-events: none; }
-
-    .upload-zone { border: 1.5px dashed var(--border); padding: 18px; text-align: center; cursor: pointer; background: var(--paper); transition: all .15s; }
-    .upload-zone:hover { border-color: var(--ink); background: white; }
-    .upload-zone input { display: none; }
-    .upload-txt { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
-    .upload-preview { margin-top: 10px; max-width: 100%; max-height: 110px; object-fit: contain; display: none; }
-
-    /* Empty state */
-    .empty { text-align: center; padding: 72px 20px; color: var(--muted); }
-    .empty svg { width: 44px; height: 44px; margin-bottom: 14px; opacity: .35; }
-    .empty-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.2; }
-
-    /* Loading state */
-    .loading-state { text-align: center; padding: 72px 20px; color: var(--muted); }
-    .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Toast */
-    .toast { position: fixed; bottom: 22px; right: 22px; z-index: 500; background: var(--ink); color: white; padding: 11px 18px; font-family: 'DM Mono', monospace; font-size: 12px; transform: translateY(70px); opacity: 0; transition: all .28s; pointer-events: none; }
-    .toast.show { transform: translateY(0); opacity: 1; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-thumb { background: var(--border); }
-    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-    @media (max-width: 860px) {
-      .card-cols { grid-template-columns: 1fr; }
-      .col { border-right: none; border-bottom: 1px solid var(--border); }
-      .fg { grid-template-columns: 1fr; }
-      .ff.full { grid-column: 1; }
-    }
-  </style>
+  <link rel="stylesheet" href="printflow.css">
 </head>
 <body>
 
@@ -320,23 +18,23 @@
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Navigation</div>
-    <a class="nav-item active" href="dashboard.html" style="text-decoration:none;">
+    <a class="nav-item active" href="dashboard.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
       Demandes
     </a>
-    <a class="nav-item" href="planning.html" style="text-decoration:none;">
+    <a class="nav-item" href="planning.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Planning
     </a>
     <div class="nav-section">Par statut</div>
-    <div class="nav-item" id="nav-brouillon" onclick="filterByStatus('brouillon')"><span class="dot dot-brouillon"></span> Brouillon</div>
-    <div class="nav-item" id="nav-en_cours"  onclick="filterByStatus('en_cours')"><span class="dot dot-en_cours"></span> En cours</div>
-    <div class="nav-item" id="nav-produit"   onclick="filterByStatus('produit')"><span class="dot dot-produit"></span> Produit</div>
-    <div class="nav-item" id="nav-expedie"   onclick="filterByStatus('expedie')"><span class="dot dot-expedie"></span> Expédié</div>
-    <div class="nav-item active" id="nav-all" onclick="filterByStatus('')">
+    <div class="nav-item active" id="nav-all"       onclick="filterByStatus('')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       Tout afficher
     </div>
+    <div class="nav-item" id="nav-brouillon" onclick="filterByStatus('brouillon')"><span class="dot dot-brouillon"></span>Brouillon</div>
+    <div class="nav-item" id="nav-en_cours"  onclick="filterByStatus('en_cours')"><span class="dot dot-en_cours"></span>En cours</div>
+    <div class="nav-item" id="nav-produit"   onclick="filterByStatus('produit')"><span class="dot dot-produit"></span>Produit</div>
+    <div class="nav-item" id="nav-expedie"   onclick="filterByStatus('expedie')"><span class="dot dot-expedie"></span>Expédié</div>
   </nav>
   <div class="sidebar-user">
     <div class="user-name"  id="user-name">—</div>
@@ -347,6 +45,7 @@
 
 <!-- ══ MAIN ══ -->
 <main class="main">
+
   <div class="topbar">
     <div class="topbar-title">Tableau de bord</div>
     <div class="topbar-right">
@@ -379,53 +78,64 @@
       <option value="a_livrer">À livrer</option>
       <option value="tnt">TNT</option>
     </select>
-    <span class="count-lbl" id="count-lbl">— demande(s)</span>
+    <span class="count-lbl" id="count-lbl">—</span>
   </div>
 
   <div class="content">
     <div id="requests-list">
-      <div class="loading-state"><div class="spinner"></div>Chargement depuis Firebase…</div>
+      <div class="loading-state"><div class="spinner"></div>Chargement…</div>
     </div>
   </div>
+
 </main>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ══ MODALE — CONFIRMATION SUPPRESSION ══ -->
+<!-- ══ NAVIGATION MOBILE ══ -->
+<nav class="mobile-nav">
+  <a class="mobile-nav-item active" href="dashboard.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
+    Demandes
+  </a>
+  <a class="mobile-nav-item" href="planning.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Planning
+  </a>
+  <a class="mobile-nav-item" href="index.html" onclick="logout();return false;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+    Quitter
+  </a>
+</nav>
+
+<!-- ══ MODALE CONFIRMATION SUPPRESSION ══ -->
 <div class="overlay" id="overlay-confirm">
-  <div class="modal" style="width:440px;">
-    <div class="modal-head" style="border-bottom-color:#fde8e4;">
-      <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
-        <span style="width:32px;height:32px;background:#fde8e4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-        </span>
-        Supprimer la demande
-      </div>
+  <div class="modal" style="width:420px;">
+    <div class="modal-head">
+      <div class="modal-title">Supprimer la demande ?</div>
       <button class="modal-close" onclick="closeModal('overlay-confirm')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-        Êtes-vous sûr de vouloir supprimer la demande<br>
-        <strong id="confirm-label" style="color:var(--ink);font-size:16px;"></strong> ?
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">
+        Vous allez supprimer la demande<br>
+        <strong id="confirm-label" style="color:var(--ink);font-size:15px;font-family:var(--font-title);font-weight:700;"></strong>
       </p>
-      <p style="font-size:12px;font-family:'DM Mono',monospace;color:var(--accent);margin-top:10px;padding:8px 12px;background:#fde8e4;">
+      <p style="margin-top:12px;padding:8px 12px;background:#fde8e4;font-family:var(--font-mono);font-size:11px;color:var(--accent);">
         ⚠ Cette action est irréversible.
       </p>
     </div>
     <div class="modal-foot">
       <button class="btn-secondary" onclick="closeModal('overlay-confirm')">Annuler</button>
       <button class="btn-primary" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDelete()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
         Supprimer définitivement
       </button>
     </div>
   </div>
 </div>
 
-<!-- ══ MODALE — NOUVELLE DEMANDE ══ -->
+<!-- ══ MODALE NOUVELLE DEMANDE ══ -->
 <div class="overlay" id="overlay-demande">
   <div class="modal">
     <div class="modal-head">
@@ -442,9 +152,9 @@
         </div>
         <div class="ff">
           <label>N° commande</label>
-          <div class="fi-ro" style="background:#edf2fd;border-color:#2b6de8;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2b6de8" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            <span id="d-commande-preview" style="font-family:'Syne',sans-serif;font-weight:800;color:#2b6de8;font-size:14px;letter-spacing:-0.02em;">—</span>
+          <div class="fi-ro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span id="d-commande-preview" class="preview-num">—</span>
           </div>
         </div>
         <div class="ff">
@@ -476,7 +186,7 @@
   </div>
 </div>
 
-<!-- ══ MODALE — BPI ══ -->
+<!-- ══ MODALE BPI ══ -->
 <div class="overlay" id="overlay-bpi">
   <div class="modal wide">
     <div class="modal-head">
@@ -495,7 +205,7 @@
           <label>N° de commande</label>
           <div class="fi-ro">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            <span id="b-commande-display">—</span>
+            <span id="b-commande-display" class="preview-num">—</span>
           </div>
         </div>
         <div class="ff">
@@ -527,8 +237,8 @@
           </select>
         </div>
         <div class="ff" id="ff-epaisseur" style="display:none;">
-          <label>Épaisseur <em>rigide uniquement</em></label>
-          <input type="text" class="fi" id="b-epaisseur" placeholder="Ex : 3mm, 5mm…"/>
+          <label>Épaisseur <em>rigide</em></label>
+          <input type="text" class="fi" id="b-epaisseur" placeholder="Ex : 3mm…"/>
         </div>
         <div class="ff">
           <label>Nombre d'exemplaires <em>*</em></label>
@@ -562,18 +272,13 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script>
 'use strict';
 
-/* ══════════════════════════════════════════
-   ⚙️  CONFIGURATION FIREBASE
-   Copiez-collez ici les mêmes valeurs
-   que dans index.html
-══════════════════════════════════════════ */
+/* ── Config ── */
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyBCHa03MhQUMFc2xBggzAqvxDitomALiAk",
   authDomain:        "gestion-de-demandes.firebaseapp.com",
@@ -582,59 +287,52 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "300350796313",
   appId:             "1:300350796313:web:8054d934e7ff408338b088"
 };
-/* ══════════════════════════════════════════ */
 
-/* ── Auth session ── */
+/* ── Auth ── */
 const _raw = sessionStorage.getItem('pf_user');
-if (!_raw) { location.href = 'index.html'; }
+if (!_raw) location.href = 'index.html';
 const ME = JSON.parse(_raw || '{}');
 document.getElementById('user-name').textContent  = ME.name  || '—';
 document.getElementById('user-email').textContent = ME.email || '—';
 function logout() { sessionStorage.removeItem('pf_user'); location.href = 'index.html'; }
 
-/* ── Init Firebase ── */
+/* ── Firebase ── */
 firebase.initializeApp(FIREBASE_CONFIG);
-const DB = firebase.firestore();
+const DB  = firebase.firestore();
 const COL = DB.collection('demandes');
 
-/* Indicateur de connexion */
 function setFbStatus(ok, label) {
-  document.getElementById('fb-dot').className   = 'fb-dot ' + (ok ? 'ok' : 'error');
+  document.getElementById('fb-dot').className    = 'fb-dot ' + (ok ? 'ok' : 'error');
   document.getElementById('fb-label').textContent = label;
 }
 
-/* ── Données locales (cache) ── */
-let CACHE = [];        // copie locale pour rendu synchrone
-let _unsubscribe = null;
+/* ── Cache ── */
+let CACHE = [];
 
-/* ── Écoute temps réel ── */
-function startListener() {
-  if (_unsubscribe) _unsubscribe();
-  _unsubscribe = COL.orderBy('createdAt', 'desc').onSnapshot(
-    snap => {
-      CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setFbStatus(true, 'Connecté');
-      renderList();
-    },
-    err => {
-      console.error(err);
-      setFbStatus(false, 'Erreur Firebase');
-      document.getElementById('requests-list').innerHTML = `
-        <div class="empty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-          <div class="empty-title">Impossible de charger les données</div>
-          <p>Vérifiez votre connexion et la configuration Firebase.</p>
-        </div>`;
-    }
-  );
-}
+/* ── Listener temps réel ── */
+COL.orderBy('createdAt', 'desc').onSnapshot(
+  snap => {
+    CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setFbStatus(true, 'Connecté');
+    renderList();
+  },
+  err => {
+    console.error(err);
+    setFbStatus(false, 'Erreur Firebase');
+    document.getElementById('requests-list').innerHTML = `
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div class="empty-title">Impossible de charger les données</div>
+        <p>Vérifiez votre connexion et la configuration Firebase.</p>
+      </div>`;
+  }
+);
 
-/* ══════════════════════════════
-   RENDU
-══════════════════════════════ */
-const STATUTS     = { brouillon: 'Brouillon', en_cours: 'En cours', produit: 'Produit', expedie: 'Expédié' };
-const EXPEDITIONS = { a_emporter: 'À emporter', a_livrer: 'À livrer', tnt: 'TNT' };
+/* ── Constantes ── */
+const STATUTS     = { brouillon:'Brouillon', en_cours:'En cours', produit:'Produit', expedie:'Expédié' };
+const EXPEDITIONS = { a_emporter:'À emporter', a_livrer:'À livrer', tnt:'TNT' };
 
+/* ══ RENDU ══ */
 function renderList() {
   const q    = document.getElementById('search-input').value.toLowerCase();
   const fSt  = document.getElementById('filter-status').value;
@@ -642,8 +340,8 @@ function renderList() {
 
   const list = CACHE.filter(d => {
     const ok_q   = !q   || (d.client||'').toLowerCase().includes(q) || (d.commande||'').toLowerCase().includes(q) || (d.createur||'').toLowerCase().includes(q);
-    const ok_st  = !fSt  || d.statut     === fSt;
-    const ok_exp = !fExp || d.expedition  === fExp;
+    const ok_st  = !fSt  || d.statut    === fSt;
+    const ok_exp = !fExp || d.expedition === fExp;
     return ok_q && ok_st && ok_exp;
   });
 
@@ -667,7 +365,7 @@ function cardHTML(d) {
   const cre  = d.createdAt ? new Date(d.createdAt).toLocaleDateString('fr-FR') : '—';
   const bpis = d.bpis || [];
   const msgs = d.messages || [];
-  const thumb= bpis.find(b => b.visuel)?.visuel || null;
+  const thumb = bpis.find(b => b.visuel)?.visuel || null;
   const isBrouillon = d.statut === 'brouillon';
 
   return `
@@ -686,7 +384,7 @@ function cardHTML(d) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
         ${bpis.length} BPI
       </span>
-      <button class="btn-del" title="Supprimer la demande" onclick="event.stopPropagation();askDelete('${d.id}')">
+      <button class="btn-del" title="Supprimer" onclick="event.stopPropagation();askDelete('${d.id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
       </button>
       <div class="chevron" id="chev-${d.id}">
@@ -705,7 +403,7 @@ function cardHTML(d) {
         <div class="detail-row"><span class="dl">Expédition</span><span class="dv">${EXPEDITIONS[d.expedition]||'—'}</span></div>
         <div class="detail-row"><span class="dl">Créé le</span><span class="dv">${cre}</span></div>
         <div class="detail-row"><span class="dl">Créateur</span><span class="dv">${esc(d.createur)}</span></div>
-        <div class="col-title" style="margin-top:18px;">Changer le statut</div>
+        <div class="col-title" style="margin-top:16px;">Changer le statut</div>
         <div class="status-btns">
           ${Object.entries(STATUTS).map(([k,v]) =>
             `<button class="s-btn ${d.statut===k?'on':''}" onclick="changeStatus('${d.id}','${k}')">${v}</button>`
@@ -724,7 +422,7 @@ function cardHTML(d) {
       </div>
     </div>
     <div class="chat-col">
-      <div class="col-title" style="margin-bottom:12px;">Discussion <span>${msgs.length} message(s)</span></div>
+      <div class="col-title" style="margin-bottom:10px;">Discussion <span>${msgs.length} message(s)</span></div>
       <div class="chat-msgs" id="chat-${d.id}">
         ${msgs.map(m => msgHTML(m)).join('')}
       </div>
@@ -782,9 +480,7 @@ function msgHTML(m) {
 </div>`;
 }
 
-/* ══════════════════════════════
-   TOGGLE CARTE
-══════════════════════════════ */
+/* ══ INTERACTIONS ══ */
 function toggleCard(id) {
   const body = document.getElementById('body-' + id);
   const chev = document.getElementById('chev-' + id);
@@ -796,14 +492,10 @@ function toggleCard(id) {
   }, 40);
 }
 
-/* ══════════════════════════════
-   STATUT (mise à jour Firestore)
-══════════════════════════════ */
 function changeStatus(id, status) {
   COL.doc(id).update({ statut: status })
     .then(() => showToast('Statut : ' + STATUTS[status]))
     .catch(e => showToast('Erreur : ' + e.message));
-  /* Patch visuel immédiat (pas d'attente du snapshot) */
   const card = document.getElementById('card-' + id);
   if (card) {
     card.querySelector('.card-dot').className = `card-dot dot-${status}`;
@@ -814,9 +506,6 @@ function changeStatus(id, status) {
   }
 }
 
-/* ══════════════════════════════
-   CHAT (mise à jour Firestore)
-══════════════════════════════ */
 function sendMsg(id) {
   const inp = document.getElementById('cinp-' + id);
   const txt = (inp.value || '').trim();
@@ -824,25 +513,20 @@ function sendMsg(id) {
   inp.value = '';
   const d = CACHE.find(x => x.id === id);
   if (!d) return;
-  const msgs = [...(d.messages || []), { id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: txt, time: new Date().toISOString() }];
-  COL.doc(id).update({ messages: msgs })
-    .catch(e => showToast('Erreur envoi : ' + e.message));
+  const msgs = [...(d.messages||[]), { id:'m_'+Date.now(), author:ME.name, email:ME.email, text:txt, time:new Date().toISOString() }];
+  COL.doc(id).update({ messages: msgs }).catch(e => showToast('Erreur : ' + e.message));
 }
 
-/* ══════════════════════════════
-   DEMANDE — CRÉATION
-══════════════════════════════ */
+/* ══ DEMANDE ══ */
 function openNewDemande() {
-  ['d-client','d-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  document.getElementById('btn-save-demande').disabled = false;
-  /* Affiche le numéro qui sera attribué */
+  ['d-client','d-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('d-commande-preview').textContent = genCmdNum();
+  document.getElementById('btn-save-demande').disabled = false;
   openModal('overlay-demande');
 }
 
-/* Génère le prochain numéro en scannant le cache */
 function genCmdNum() {
-  const yr     = new Date().getFullYear();
+  const yr = new Date().getFullYear();
   const prefix = 'F' + yr;
   let max = 0;
   CACHE.forEach(d => {
@@ -863,48 +547,34 @@ function saveDemande() {
 
   const btn = document.getElementById('btn-save-demande');
   btn.disabled = true;
-
   const commande = genCmdNum();
 
-  /* Construction des messages initiaux */
   const messages = [
-    { id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: `Demande ${commande} créée pour ${client}.`, time: new Date().toISOString() }
+    { id:'m_'+Date.now(), author:ME.name, email:ME.email, text:`Demande ${commande} créée pour ${client}.`, time:new Date().toISOString() }
   ];
   if (commentaire) {
-    messages.push({ id: 'm_' + (Date.now() + 1), author: ME.name, email: ME.email, text: commentaire, time: new Date().toISOString() });
+    messages.push({ id:'m_'+(Date.now()+1), author:ME.name, email:ME.email, text:commentaire, time:new Date().toISOString() });
   }
 
-  const newD = {
-    client, commande, livraison, expedition,
-    statut: 'brouillon',
-    createur: ME.name, createurEmail: ME.email,
-    createdAt: new Date().toISOString(),
-    bpis: [], messages
-  };
-
-  COL.add(newD)
+  COL.add({ client, commande, livraison, expedition, statut:'brouillon', createur:ME.name, createurEmail:ME.email, createdAt:new Date().toISOString(), bpis:[], messages })
     .then(ref => {
       closeModal('overlay-demande');
       resetAllFilters();
       showToast(`Demande ${commande} créée !`);
-      const tryOpen = setInterval(() => {
-        if (document.getElementById('body-' + ref.id)) {
-          clearInterval(tryOpen);
-          const body = document.getElementById('body-' + ref.id);
-          const chev = document.getElementById('chev-' + ref.id);
-          body.classList.add('open'); chev.classList.add('open');
+      const t = setInterval(() => {
+        if (document.getElementById('body-'+ref.id)) {
+          clearInterval(t);
+          document.getElementById('body-'+ref.id).classList.add('open');
+          document.getElementById('chev-'+ref.id).classList.add('open');
         }
       }, 100);
-      setTimeout(() => clearInterval(tryOpen), 3000);
+      setTimeout(() => clearInterval(t), 3000);
     })
     .catch(e => { showToast('Erreur Firebase : ' + e.message); btn.disabled = false; });
 }
 
-/* ══════════════════════════════
-   SUPPRESSION
-══════════════════════════════ */
+/* ══ SUPPRESSION ══ */
 let _deleteId = null;
-
 function askDelete(id) {
   const d = CACHE.find(x => x.id === id);
   if (!d) return;
@@ -913,28 +583,21 @@ function askDelete(id) {
   document.getElementById('confirm-label').textContent = `${d.commande} — ${d.client}`;
   openModal('overlay-confirm');
 }
-
 function confirmDelete() {
   if (!_deleteId) return;
-  COL.doc(_deleteId).delete()
-    .then(() => { showToast('Demande supprimée.'); })
-    .catch(e => showToast('Erreur : ' + e.message));
+  COL.doc(_deleteId).delete().then(() => showToast('Demande supprimée.')).catch(e => showToast('Erreur : '+e.message));
   _deleteId = null;
   closeModal('overlay-confirm');
 }
 
-/* ══════════════════════════════
-   BPI — CRÉATION / MODIFICATION
-══════════════════════════════ */
-let _bpiDemandeId = null;
-let _bpiEditId    = null;
+/* ══ BPI ══ */
+let _bpiDemandeId = null, _bpiEditId = null;
 
 function openAddBPI(demandeId) {
-  _bpiDemandeId = demandeId;
-  _bpiEditId    = null;
+  _bpiDemandeId = demandeId; _bpiEditId = null;
   resetBPIForm();
   const d = CACHE.find(x => x.id === demandeId);
-  if (d) { document.getElementById('b-client').value = d.client; document.getElementById('b-commande-display').textContent = d.commande || '—'; }
+  if (d) { document.getElementById('b-client').value = d.client; document.getElementById('b-commande-display').textContent = d.commande||'—'; }
   document.getElementById('bpi-modal-title').textContent = 'Ajouter un BPI';
   document.getElementById('btn-save-bpi').textContent = 'Ajouter le BPI';
   openModal('overlay-bpi');
@@ -942,64 +605,59 @@ function openAddBPI(demandeId) {
 
 function openEditBPI(demandeId, bpiId) {
   const d = CACHE.find(x => x.id === demandeId);
-  if (!d || d.statut !== 'brouillon') { showToast('Modification impossible : la demande n\'est plus en brouillon.'); return; }
+  if (!d || d.statut !== 'brouillon') { showToast('Modification impossible : statut non brouillon.'); return; }
   const b = (d.bpis||[]).find(x => x.id === bpiId);
   if (!b) return;
-  _bpiDemandeId = demandeId;
-  _bpiEditId    = bpiId;
+  _bpiDemandeId = demandeId; _bpiEditId = bpiId;
   resetBPIForm();
-  document.getElementById('b-client').value    = b.client || '';
-  document.getElementById('b-commande-display').textContent = d.commande || '—';
-  document.getElementById('b-format-l').value  = parseFloat(b.formatL) || '';
-  document.getElementById('b-format-h').value  = parseFloat(b.formatH) || '';
-  document.getElementById('b-exemplaires').value = b.exemplaires || 1;
-  document.getElementById('b-type').value      = b.type || '';
+  document.getElementById('b-client').value     = b.client||'';
+  document.getElementById('b-commande-display').textContent = d.commande||'—';
+  document.getElementById('b-format-l').value   = parseFloat(b.formatL)||'';
+  document.getElementById('b-format-h').value   = parseFloat(b.formatH)||'';
+  document.getElementById('b-exemplaires').value = b.exemplaires||1;
+  document.getElementById('b-type').value       = b.type||'';
   onTypeChange();
-  document.getElementById('b-matiere').value   = b.matiere || '';
-  if (b.type === 'rigide') document.getElementById('b-epaisseur').value = b.epaisseur || '';
-  document.getElementById('b-finition').value  = b.finition || '';
-  document.getElementById('b-commentaire').value = b.commentaire || '';
-  if (b.visuel) { const img = document.getElementById('b-preview'); img.src = b.visuel; img.style.display = 'block'; }
+  document.getElementById('b-matiere').value    = b.matiere||'';
+  if (b.type==='rigide') document.getElementById('b-epaisseur').value = b.epaisseur||'';
+  document.getElementById('b-finition').value   = b.finition||'';
+  document.getElementById('b-commentaire').value = b.commentaire||'';
+  if (b.visuel) { const img=document.getElementById('b-preview'); img.src=b.visuel; img.style.display='block'; }
   document.getElementById('bpi-modal-title').textContent = 'Modifier le BPI';
   document.getElementById('btn-save-bpi').textContent = 'Enregistrer les modifications';
   openModal('overlay-bpi');
 }
 
 function resetBPIForm() {
-  ['b-client','b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire'].forEach(id => { document.getElementById(id).value = ''; });
+  ['b-client','b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire'].forEach(id => { document.getElementById(id).value=''; });
   document.getElementById('b-exemplaires').value = '1';
   document.getElementById('b-type').value = '';
   document.getElementById('b-matiere').innerHTML = '<option value="">Choisir le type d\'abord</option>';
   document.getElementById('ff-epaisseur').style.display = 'none';
   document.getElementById('b-visuel').value = '';
-  const img = document.getElementById('b-preview'); img.src = ''; img.style.display = 'none';
+  const img = document.getElementById('b-preview'); img.src=''; img.style.display='none';
 }
 
 function onTypeChange() {
   const type = document.getElementById('b-type').value;
   const sel  = document.getElementById('b-matiere');
-  const opts = type === 'souple' ? ['Adhésif','Bâche','Dépoli'] : type === 'rigide' ? ['PVC','Dibond','Plexiglas','Bois'] : [];
-  sel.innerHTML = opts.length ? '<option value="">Choisir…</option>' + opts.map(o => `<option>${o}</option>`).join('') : '<option value="">Choisir le type d\'abord</option>';
-  document.getElementById('ff-epaisseur').style.display = type === 'rigide' ? '' : 'none';
-  if (type !== 'rigide') document.getElementById('b-epaisseur').value = '';
+  const opts = type==='souple' ? ['Adhésif','Bâche','Dépoli'] : type==='rigide' ? ['PVC','Dibond','Plexiglas','Bois'] : [];
+  sel.innerHTML = opts.length ? '<option value="">Choisir…</option>'+opts.map(o=>`<option>${o}</option>`).join('') : '<option value="">Choisir le type d\'abord</option>';
+  document.getElementById('ff-epaisseur').style.display = type==='rigide' ? '' : 'none';
+  if (type!=='rigide') document.getElementById('b-epaisseur').value = '';
 }
 
 function previewImg(input) {
   const f = input.files[0]; if (!f) return;
-  /* Redimensionne l'image avant stockage (max 800px, limite Firestore) */
   const reader = new FileReader();
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 800;
-      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
-      const canvas = document.createElement('canvas');
-      canvas.width  = img.width  * ratio;
-      canvas.height = img.height * ratio;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const MAX = 800, ratio = Math.min(MAX/img.width, MAX/img.height, 1);
+      const c = document.createElement('canvas');
+      c.width = img.width*ratio; c.height = img.height*ratio;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
       const prev = document.getElementById('b-preview');
-      prev.src = canvas.toDataURL('image/jpeg', 0.8);
-      prev.style.display = 'block';
+      prev.src = c.toDataURL('image/jpeg',.8); prev.style.display='block';
     };
     img.src = e.target.result;
   };
@@ -1015,50 +673,33 @@ function saveBPI() {
   const epaisseur= document.getElementById('b-epaisseur').value.trim();
   const finition = document.getElementById('b-finition').value.trim();
   const comment  = document.getElementById('b-commentaire').value.trim();
-  const qte      = parseInt(document.getElementById('b-exemplaires').value) || 1;
+  const qte      = parseInt(document.getElementById('b-exemplaires').value)||1;
   const prevEl   = document.getElementById('b-preview');
-  const visuel   = (prevEl.style.display !== 'none' && prevEl.src && !prevEl.src.endsWith('dashboard.html')) ? prevEl.src : null;
+  const visuel   = (prevEl.style.display!=='none' && prevEl.src && !prevEl.src.endsWith('dashboard.html')) ? prevEl.src : null;
 
-  if (!client || !type || !matiere) { showToast('Remplir les champs obligatoires.'); return; }
-  if (!fL || !fH || isNaN(parseFloat(fL)) || isNaN(parseFloat(fH))) { showToast('Saisir une largeur et hauteur valides (cm).'); return; }
+  if (!client||!type||!matiere) { showToast('Remplir les champs obligatoires.'); return; }
+  if (!fL||!fH||isNaN(parseFloat(fL))||isNaN(parseFloat(fH))) { showToast('Saisir largeur et hauteur valides (cm).'); return; }
 
   const d = CACHE.find(x => x.id === _bpiDemandeId);
   if (!d) return;
+  const bpis = [...(d.bpis||[])];
+  const payload = { id:_bpiEditId||('bpi_'+Date.now()), client, commande:d.commande, formatL:parseFloat(fL)+' cm', formatH:parseFloat(fH)+' cm', type, matiere, epaisseur:type==='rigide'?epaisseur:'', finition, commentaire:comment, exemplaires:qte, visuel };
 
-  const bpis = [...(d.bpis || [])];
-  const payload = {
-    id: _bpiEditId || ('bpi_' + Date.now()),
-    client, commande: d.commande,
-    formatL: parseFloat(fL) + ' cm', formatH: parseFloat(fH) + ' cm',
-    type, matiere, epaisseur: type === 'rigide' ? epaisseur : '',
-    finition, commentaire: comment, exemplaires: qte, visuel
-  };
-
-  if (_bpiEditId) {
-    const idx = bpis.findIndex(x => x.id === _bpiEditId);
-    if (idx !== -1) bpis[idx] = payload;
-  } else {
-    bpis.push(payload);
-  }
+  if (_bpiEditId) { const idx=bpis.findIndex(x=>x.id===_bpiEditId); if(idx!==-1) bpis[idx]=payload; }
+  else bpis.push(payload);
 
   const btn = document.getElementById('btn-save-bpi');
   btn.disabled = true;
   COL.doc(_bpiDemandeId).update({ bpis })
-    .then(() => {
-      showToast(_bpiEditId ? 'BPI modifié !' : 'BPI ajouté !');
-      closeModal('overlay-bpi');
-      btn.disabled = false;
-    })
-    .catch(e => { showToast('Erreur : ' + e.message); btn.disabled = false; });
+    .then(() => { showToast(_bpiEditId?'BPI modifié !':'BPI ajouté !'); closeModal('overlay-bpi'); btn.disabled=false; })
+    .catch(e => { showToast('Erreur : '+e.message); btn.disabled=false; });
 }
 
-/* ══════════════════════════════
-   FILTRES SIDEBAR
-══════════════════════════════ */
+/* ══ FILTRES ══ */
 function filterByStatus(status) {
   document.getElementById('filter-status').value = status;
-  if (status === '') resetAllFilters();
-  setActiveNav(status === '' ? 'nav-all' : 'nav-' + status);
+  if (status==='') resetAllFilters();
+  setActiveNav(status===''?'nav-all':'nav-'+status);
   renderList();
 }
 
@@ -1072,35 +713,28 @@ function resetAllFilters() {
 function setActiveNav(activeId) {
   ['nav-all','nav-brouillon','nav-en_cours','nav-produit','nav-expedie'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', id === activeId);
+    if (el) el.classList.toggle('active', id===activeId);
   });
 }
 
-/* ══════════════════════════════
-   UTILITAIRES
-══════════════════════════════ */
+/* ══ UTILITAIRES ══ */
 function openModal(id)  { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 document.querySelectorAll('.overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('show'); });
 });
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3200);
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
 }
 
 function esc(s) {
-  if (!s) return '';
+  if(!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-/* ══════════════════════════════
-   DÉMARRAGE
-══════════════════════════════ */
-startListener();
 </script>
 </body>
 </html>

@@ -39,6 +39,7 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  display: flex;
 }
 
 a { color: inherit; }
@@ -1135,23 +1136,226 @@ a { color: inherit; }
 .login-loading.show { display: block; }
 
 /* ══════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLETTE (≤ 900px)
 ══════════════════════════════ */
-@media (max-width: 860px) {
+@media (max-width: 900px) {
+  /* Cartes : colonnes en une seule */
   .card-cols { grid-template-columns: 1fr; }
   .col { border-right: none; border-bottom: 1px solid var(--border); }
+  .col:last-child { border-bottom: none; }
+
+  /* Formulaires : une colonne */
   .fg { grid-template-columns: 1fr; }
   .ff.full { grid-column: 1; }
+  .info-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Calendrier : scroll horizontal */
+  .cal-container { padding: 12px 16px; }
+  .cal-grid { min-width: 680px; }
+}
+
+/* ══════════════════════════════
+   RESPONSIVE — MOBILE (≤ 680px)
+   Sidebar → barre de nav en bas
+══════════════════════════════ */
+@media (max-width: 680px) {
+
+  /* ── Corps général ── */
+  body { flex-direction: column; }
+
+  /* ── Sidebar masquée, remplacée par nav bas ── */
+  .sidebar { display: none; }
+
+  /* ── Barre de navigation mobile en bas ── */
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--ink);
+    z-index: 200;
+    height: 60px;
+    border-top: 1px solid #222;
+  }
+
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    color: #6a6460;
+    text-decoration: none;
+    transition: color .15s;
+    -webkit-tap-highlight-color: transparent;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: .04em;
+    padding: 8px 4px;
+  }
+  .mobile-nav-item svg { width: 20px; height: 20px; }
+  .mobile-nav-item.active { color: white; }
+  .mobile-nav-item.active svg { stroke: var(--accent); }
+
+  /* ── Main prend toute la largeur ── */
+  .main {
+    margin-left: 0;
+    padding-bottom: 60px; /* espace pour la nav bas */
+    width: 100%;
+  }
+
+  /* ── Topbar mobile ── */
+  .topbar {
+    height: auto;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .topbar-title { font-size: 15px; }
+  .topbar-right { gap: 8px; flex-wrap: wrap; }
+
+  /* Label Firebase plus court */
+  #fb-label { display: none; }
+
+  /* Bouton "Nouvelle demande" — pleine largeur */
+  .topbar-right .btn-primary {
+    font-size: 13px;
+    padding: 9px 14px;
+  }
+
+  /* ── Barre de filtres ── */
+  .filters-bar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .search-wrap {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+  .f-select { flex: 1; font-size: 13px; }
+  .count-lbl { display: none; }
+
+  /* ── Contenu ── */
+  .content { padding: 12px 14px; }
+  .requests-list { gap: 10px; }
+
+  /* ── Cartes ── */
+  .card-head { padding: 12px 14px; gap: 10px; }
+  .card-num  { font-size: 13px; }
+  .card-info { display: none; } /* masqué sur mobile, visible dans le détail */
+  .card-thumb { width: 34px; height: 34px; }
+
+  /* Pills et badges plus compacts */
+  .card-right { gap: 5px; }
+  .bpi-badge  { display: none; }
+
+  /* Corps de carte */
+  .card-body.open .card-cols { grid-template-columns: 1fr; }
+  .col { padding: 12px 14px; }
+
+  /* ── Modales ── */
+  .modal, .modal.wide {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: none;
+    border-radius: 12px 12px 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    animation: slideUp .25s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .overlay { align-items: flex-end; }
+  .modal-head { padding: 16px 18px 14px; }
+  .modal-body { padding: 14px 18px; }
+  .modal-foot { padding: 10px 18px 20px; }
+  .modal-title { font-size: 15px; }
+
+  /* ── Formulaires mobile ── */
+  .fg { grid-template-columns: 1fr; gap: 12px; }
+  .fi, .fs, .ft { font-size: 16px; } /* évite le zoom auto iOS */
+  .fi-ro { font-size: 13px; }
+
+  /* ── Chat ── */
+  .chat-col { padding: 12px 14px; }
+  .chat-msgs { max-height: 140px; }
+  .chat-inp { font-size: 16px; } /* évite zoom iOS */
+
+  /* ── Planning ── */
+  .legend-bar { padding: 8px 14px; gap: 10px; }
+  .legend-item { font-size: 10px; }
+
+  .topbar-left { flex-wrap: wrap; gap: 8px; }
+  .week-label  { min-width: 130px; font-size: 11px; }
+
+  /* ── Toast ── */
+  .toast {
+    bottom: 70px; /* au-dessus de la nav mobile */
+    right: 14px;
+    left: 14px;
+    text-align: center;
+  }
+
+  /* ── Login ── */
+  .login-wrap {
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    border: none;
+    box-shadow: none;
+  }
+  .login-panel-left { display: none; }
+  .login-panel-right { padding: 40px 24px 32px; }
+  .login-title { font-size: 22px; }
+
+  /* ── Status btns ── */
+  .status-btns { gap: 5px; }
+  .s-btn { padding: 6px 10px; font-size: 10px; }
+
+  /* Agrandir les zones tactiles */
+  .btn-del   { width: 36px; height: 36px; }
+  .btn-nav   { width: 36px; height: 36px; }
+  .btn-today { padding: 7px 14px; }
+  .s-btn     { min-height: 36px; }
+  .btn-send  { padding: 10px 14px; }
+  .nav-item  { padding: 11px 20px; } /* plus grand pour le touch */
+}
+
+/* ══════════════════════════════
+   NAV MOBILE — masquée sur desktop
+══════════════════════════════ */
+.mobile-nav { display: none; }
+
+/* ══════════════════════════════
+   LOGIN PAGE — centrée sur desktop
+══════════════════════════════ */
+body.login-page {
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 @media (max-width: 580px) {
   .login-panel-left { display: none; }
+  body.login-page { overflow: auto; align-items: flex-start; }
 }
 
 /* ══════════════════════════════
    SCROLLBAR
 ══════════════════════════════ */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
