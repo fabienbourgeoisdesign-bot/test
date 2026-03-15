@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PrintFlow — Tableau de bord</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,7 +23,7 @@
       --sidebar: 220px;
     }
 
-    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
+    body { font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
 
     /* ── Sidebar ── */
     .sidebar {
@@ -36,7 +37,7 @@
     }
     .logo-sq { width: 32px; height: 32px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .logo-sq svg { width: 17px; height: 17px; fill: white; }
-    .logo-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.03em; }
+    .logo-name { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
     .logo-name em { color: var(--accent); font-style: normal; }
 
     .sidebar-nav { padding: 16px 0; flex: 1; }
@@ -75,7 +76,7 @@
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 50;
     }
-    .topbar-title { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; }
+    .topbar-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
 
     /* ── Indicateur de connexion Firebase ── */
@@ -90,8 +91,8 @@
     .btn-primary {
       display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
       background: var(--ink); color: white;
-      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-      border: 2px solid var(--ink); cursor: pointer; letter-spacing: .01em;
+      font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 13px; font-weight: 700;
+      border: 2px solid var(--ink); cursor: pointer; letter-spacing: .01em; line-height: 1.2;
       transition: background .15s, border-color .15s;
     }
     .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
@@ -127,7 +128,7 @@
     .count-lbl { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
 
     .content { padding: 22px 30px; flex: 1; }
-    .requests-list { display: flex; flex-direction: column; gap: 10px; }
+    .requests-list { display: flex; flex-direction: column; gap: 18px; }
 
     /* ── Cartes ── */
     .req-card { background: white; border: 1.5px solid var(--border); transition: border-color .18s, box-shadow .18s; }
@@ -138,7 +139,7 @@
     .card-thumb { width: 42px; height: 42px; object-fit: cover; border: 1.5px solid var(--border); flex-shrink: 0; background: var(--paper); }
 
     .card-meta  { flex: 1; min-width: 0; }
-    .card-num   { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-num   { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-client{ font-size: 12px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-info  { font-size: 11px; color: #b0aba3; font-family: 'DM Mono', monospace; margin-top: 2px; }
 
@@ -244,7 +245,7 @@
     @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
     .modal-head { padding: 22px 26px 18px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .modal-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .modal-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
     .modal-close { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1.5px solid var(--border); cursor: pointer; transition: all .12s; }
     .modal-close:hover { background: var(--ink); color: white; border-color: var(--ink); }
     .modal-close svg { width: 13px; height: 13px; }
@@ -285,7 +286,7 @@
     /* Empty state */
     .empty { text-align: center; padding: 72px 20px; color: var(--muted); }
     .empty svg { width: 44px; height: 44px; margin-bottom: 14px; opacity: .35; }
-    .empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+    .empty-title { font-family: 'Syne', ui-sans-serif, sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.2; }
 
     /* Loading state */
     .loading-state { text-align: center; padding: 72px 20px; color: var(--muted); }
@@ -433,9 +434,9 @@
         </div>
         <div class="ff">
           <label>N° commande</label>
-          <div class="fi-ro">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            Généré automatiquement
+          <div class="fi-ro" style="background:#edf2fd;border-color:#2b6de8;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2b6de8" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span id="d-commande-preview" style="font-family:'Syne',sans-serif;font-weight:800;color:#2b6de8;font-size:14px;letter-spacing:-0.02em;">—</span>
           </div>
         </div>
         <div class="ff">
@@ -450,6 +451,10 @@
             <option value="a_livrer">À livrer</option>
             <option value="tnt">TNT</option>
           </select>
+        </div>
+        <div class="ff full">
+          <label>Commentaire initial</label>
+          <textarea class="ft" id="d-commentaire" placeholder="Instructions, contexte, remarques sur cette commande…" rows="3"></textarea>
         </div>
       </div>
     </div>
@@ -820,8 +825,10 @@ function sendMsg(id) {
    DEMANDE — CRÉATION
 ══════════════════════════════ */
 function openNewDemande() {
-  ['d-client','d-livraison','d-expedition'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['d-client','d-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('btn-save-demande').disabled = false;
+  /* Affiche le numéro qui sera attribué */
+  document.getElementById('d-commande-preview').textContent = genCmdNum();
   openModal('overlay-demande');
 }
 
@@ -840,22 +847,31 @@ function genCmdNum() {
 }
 
 function saveDemande() {
-  const client     = document.getElementById('d-client').value.trim();
-  const livraison  = document.getElementById('d-livraison').value;
-  const expedition = document.getElementById('d-expedition').value;
+  const client      = document.getElementById('d-client').value.trim();
+  const livraison   = document.getElementById('d-livraison').value;
+  const expedition  = document.getElementById('d-expedition').value;
+  const commentaire = document.getElementById('d-commentaire').value.trim();
   if (!client || !livraison || !expedition) { showToast('Remplir les champs obligatoires (*)'); return; }
 
   const btn = document.getElementById('btn-save-demande');
   btn.disabled = true;
 
   const commande = genCmdNum();
+
+  /* Construction des messages initiaux */
+  const messages = [
+    { id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: `Demande ${commande} créée pour ${client}.`, time: new Date().toISOString() }
+  ];
+  if (commentaire) {
+    messages.push({ id: 'm_' + (Date.now() + 1), author: ME.name, email: ME.email, text: commentaire, time: new Date().toISOString() });
+  }
+
   const newD = {
     client, commande, livraison, expedition,
     statut: 'brouillon',
     createur: ME.name, createurEmail: ME.email,
     createdAt: new Date().toISOString(),
-    bpis: [],
-    messages: [{ id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: `Demande ${commande} créée pour ${client}.`, time: new Date().toISOString() }]
+    bpis: [], messages
   };
 
   COL.add(newD)
@@ -863,7 +879,6 @@ function saveDemande() {
       closeModal('overlay-demande');
       resetAllFilters();
       showToast(`Demande ${commande} créée !`);
-      /* Ouvrir la carte dès que le snapshot l'ajoute */
       const tryOpen = setInterval(() => {
         if (document.getElementById('body-' + ref.id)) {
           clearInterval(tryOpen);
