@@ -10,767 +10,341 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink: #0f0e0d;
-      --paper: #f5f0e8;
-      --accent: #e84c2b;
-      --accent2: #2b6de8;
-      --green: #1a9e5c;
-      --yellow: #d4920a;
-      --purple: #7b3fe4;
-      --muted: #8a867e;
-      --border: #d4cfc6;
-      --white: #ffffff;
-      --sidebar-w: 220px;
+      --ink:     #0f0e0d;
+      --paper:   #f5f0e8;
+      --accent:  #e84c2b;
+      --blue:    #2b6de8;
+      --green:   #1a9e5c;
+      --yellow:  #d4920a;
+      --muted:   #8a867e;
+      --border:  #d4cfc6;
+      --white:   #ffffff;
+      --sidebar: 220px;
     }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--paper);
-      color: var(--ink);
-      min-height: 100vh;
-      display: flex;
-    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; }
 
-    /* ─── SIDEBAR ─── */
+    /* ── Sidebar ── */
     .sidebar {
-      width: var(--sidebar-w);
-      background: var(--ink);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 100;
+      width: var(--sidebar); background: var(--ink); color: white;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto;
     }
-
     .sidebar-logo {
-      padding: 28px 24px 20px;
-      border-bottom: 1px solid #2a2826;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      padding: 26px 22px 20px; border-bottom: 1px solid #252321;
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
     }
+    .logo-sq { width: 32px; height: 32px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-sq svg { width: 17px; height: 17px; fill: white; }
+    .logo-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.03em; }
+    .logo-name em { color: var(--accent); font-style: normal; }
 
-    .logo-icon {
-      width: 32px; height: 32px;
-      background: var(--accent);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .logo-icon svg { width: 18px; height: 18px; fill: white; }
-
-    .logo-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-    .logo-name span { color: var(--accent); }
-
-    .sidebar-nav {
-      padding: 20px 0;
-      flex: 1;
-    }
-
-    .nav-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #4a4744;
-      padding: 0 24px;
-      margin-bottom: 8px;
-      margin-top: 16px;
-    }
-
+    .sidebar-nav { padding: 16px 0; flex: 1; }
+    .nav-section { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #3e3c3a; padding: 0 22px; margin: 16px 0 6px; }
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 24px;
-      font-size: 14px;
-      color: #a09890;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      border-left: 3px solid transparent;
+      display: flex; align-items: center; gap: 10px; padding: 9px 22px;
+      font-size: 13.5px; color: #9a9490; cursor: pointer;
+      border-left: 3px solid transparent; transition: background .12s, color .12s; user-select: none;
     }
+    .nav-item:hover  { background: #1c1a18; color: #d4d0ca; }
+    .nav-item.active { background: #1c1a18; color: white; border-left-color: var(--accent); }
+    .nav-item svg    { width: 15px; height: 15px; flex-shrink: 0; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+    .dot-brouillon { background: var(--muted); }
+    .dot-en_cours  { background: var(--yellow); }
+    .dot-produit   { background: var(--blue); }
+    .dot-expedie   { background: var(--green); }
 
-    .nav-item:hover { background: #1e1c1a; color: white; }
-    .nav-item.active { background: #1e1c1a; color: white; border-left-color: var(--accent); }
-    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .sidebar-user {
-      padding: 20px 24px;
-      border-top: 1px solid #2a2826;
-    }
-
-    .user-info { font-size: 13px; color: #a09890; }
-    .user-name { font-size: 14px; color: white; font-weight: 600; margin-bottom: 2px; }
-
+    .sidebar-user { padding: 18px 22px; border-top: 1px solid #252321; flex-shrink: 0; }
+    .user-name  { font-size: 13px; font-weight: 600; color: white; margin-bottom: 2px; }
+    .user-email { font-size: 12px; color: #6a6460; }
     .btn-logout {
-      margin-top: 12px;
-      width: 100%;
-      padding: 8px;
-      background: transparent;
-      border: 1px solid #3a3836;
-      color: #6a6460;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      transition: all 0.2s;
+      margin-top: 12px; width: 100%; padding: 8px; background: transparent;
+      border: 1px solid #303030; color: #5a5654;
+      font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; letter-spacing: .04em;
+      transition: border-color .15s, color .15s;
     }
     .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ─── MAIN ─── */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
     .topbar {
-      background: var(--white);
-      border-bottom: 1.5px solid var(--border);
-      padding: 0 32px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      height: 62px; padding: 0 30px;
+      background: var(--white); border-bottom: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
     }
+    .topbar-title { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
 
-    .topbar-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
+    /* ── Indicateur de connexion Firebase ── */
+    .fb-status {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
     }
-
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .fb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+    .fb-dot.ok    { background: var(--green); }
+    .fb-dot.error { background: var(--accent); }
 
     .btn-primary {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: var(--ink);
-      color: white;
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      border: 2px solid var(--ink);
-      cursor: pointer;
-      letter-spacing: 0.01em;
-      transition: background 0.2s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+      background: var(--ink); color: white;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      border: 2px solid var(--ink); cursor: pointer; letter-spacing: .01em;
+      transition: background .15s, border-color .15s;
     }
     .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
-    .btn-primary svg { width: 16px; height: 16px; }
+    .btn-primary svg { width: 15px; height: 15px; }
 
     .btn-secondary {
-      padding: 9px 16px;
-      background: transparent;
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1.5px solid var(--border);
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 8px 14px; background: transparent; color: var(--ink);
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      border: 1.5px solid var(--border); cursor: pointer; transition: border-color .15s;
     }
     .btn-secondary:hover { border-color: var(--ink); }
 
-    /* ─── FILTERS BAR ─── */
+    /* Filtres */
     .filters-bar {
-      padding: 20px 32px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid var(--border);
-      background: var(--paper);
+      padding: 16px 30px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border); background: var(--paper);
     }
+    .search-wrap {
+      display: flex; align-items: center; gap: 8px;
+      background: white; border: 1.5px solid var(--border);
+      padding: 8px 12px; flex: 1; min-width: 180px; max-width: 320px;
+    }
+    .search-wrap svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+    .search-wrap input { border: none; background: transparent; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); width: 100%; }
 
-    .search-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: white;
+    .f-select {
+      padding: 8px 30px 8px 12px;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;
       border: 1.5px solid var(--border);
-      padding: 8px 14px;
-      flex: 1;
-      min-width: 200px;
-      max-width: 340px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
+      appearance: none; outline: none; cursor: pointer;
     }
-    .search-box svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
-    .search-box input {
-      border: none; background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      width: 100%;
-      color: var(--ink);
+    .count-lbl { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+
+    .content { padding: 22px 30px; flex: 1; }
+    .requests-list { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Cartes ── */
+    .req-card { background: white; border: 1.5px solid var(--border); transition: border-color .18s, box-shadow .18s; }
+    .req-card:hover { border-color: #b8b3aa; box-shadow: 3px 3px 0 #d4cfc6; }
+
+    .card-head { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; user-select: none; }
+    .card-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .card-thumb { width: 42px; height: 42px; object-fit: cover; border: 1.5px solid var(--border); flex-shrink: 0; background: var(--paper); }
+
+    .card-meta  { flex: 1; min-width: 0; }
+    .card-num   { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-client{ font-size: 12px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-info  { font-size: 11px; color: #b0aba3; font-family: 'DM Mono', monospace; margin-top: 2px; }
+
+    .card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .pill { padding: 3px 9px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; border: 1px solid; }
+    .pill-brouillon { color: var(--muted);   border-color: var(--muted);   background: #f4f3f1; }
+    .pill-en_cours  { color: var(--yellow);  border-color: var(--yellow);  background: #fef8ec; }
+    .pill-produit   { color: var(--blue);    border-color: var(--blue);    background: #edf2fd; }
+    .pill-expedie   { color: var(--green);   border-color: var(--green);   background: #e8f7f0; }
+
+    .bpi-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .bpi-badge svg { width: 11px; height: 11px; }
+
+    .btn-del {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      background: transparent; border: 1.5px solid var(--border); color: var(--muted); cursor: pointer; transition: all .14s;
     }
+    .btn-del:hover { background: #fde8e4; border-color: var(--accent); color: var(--accent); }
+    .btn-del svg { width: 13px; height: 13px; }
 
-    .filter-select {
-      padding: 8px 14px;
-      background: white;
-      border: 1.5px solid var(--border);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--ink);
-      cursor: pointer;
-      outline: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
-    }
+    .chevron { color: var(--muted); flex-shrink: 0; transition: transform .25s; }
+    .chevron svg { width: 15px; height: 15px; display: block; }
+    .chevron.open { transform: rotate(180deg); }
 
-    .count-badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      margin-left: auto;
-    }
-
-    /* ─── REQUESTS LIST ─── */
-    .content {
-      padding: 24px 32px;
-      flex: 1;
-    }
-
-    .requests-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .request-card {
-      background: white;
-      border: 1.5px solid var(--border);
-      transition: border-color 0.2s, box-shadow 0.2s;
-      overflow: hidden;
-    }
-
-    .request-card:hover {
-      border-color: var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .card-status {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .status-brouillon { background: var(--muted); }
-    .status-en_cours { background: var(--yellow); }
-    .status-produit { background: var(--accent2); }
-    .status-expedie { background: var(--green); }
-
-    .card-meta { flex: 1; min-width: 0; }
-    .card-client {
-      font-weight: 700;
-      font-size: 15px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-info {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      margin-top: 3px;
-    }
-
-    .card-pills { display: flex; gap: 8px; align-items: center; }
-
-    .pill {
-      padding: 4px 10px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      border: 1px solid;
-    }
-
-    .pill-brouillon { color: var(--muted); border-color: var(--muted); background: #f5f5f5; }
-    .pill-en_cours { color: var(--yellow); border-color: var(--yellow); background: #fef9ed; }
-    .pill-produit { color: var(--accent2); border-color: var(--accent2); background: #edf3fe; }
-    .pill-expedie { color: var(--green); border-color: var(--green); background: #e6f7f0; }
-
-    .card-bpi-count {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .card-chevron {
-      flex-shrink: 0;
-      transition: transform 0.3s;
-      color: var(--muted);
-    }
-    .card-chevron svg { width: 16px; height: 16px; }
-    .card-chevron.open { transform: rotate(180deg); }
-
-    /* Card expanded */
-    .card-body {
-      display: none;
-      border-top: 1px solid var(--border);
-    }
+    .card-body { display: none; border-top: 1.5px solid var(--border); }
     .card-body.open { display: block; }
+    .card-cols { display: grid; grid-template-columns: 1fr 1fr; }
+    .col { padding: 18px 20px; border-right: 1px solid var(--border); }
+    .col:last-child { border-right: none; }
 
-    .card-body-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
+    .col-title {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
     }
+    .detail-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; font-size: 13px; gap: 8px; }
+    .dl { color: var(--muted); flex-shrink: 0; }
+    .dv { font-weight: 600; text-align: right; }
+    .dv.mono { font-family: 'DM Mono', monospace; color: var(--accent); }
 
-    .detail-section {
-      padding: 20px;
-      border-right: 1px solid var(--border);
-    }
-    .detail-section:last-child { border-right: none; }
+    .status-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+    .s-btn { padding: 5px 11px; font-family: 'DM Mono', monospace; font-size: 11px; background: white; border: 1.5px solid var(--border); cursor: pointer; transition: all .12s; }
+    .s-btn:hover { border-color: var(--ink); background: var(--paper); }
+    .s-btn.on { background: var(--ink); color: white; border-color: var(--ink); }
 
-    .section-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
-    .detail-label { color: var(--muted); flex-shrink: 0; }
-    .detail-value { font-weight: 600; text-align: right; }
-
-    .status-changer {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .status-btn {
-      padding: 6px 12px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      border: 1.5px solid var(--border);
-      background: white;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .status-btn:hover { border-color: var(--ink); background: var(--paper); }
-    .status-btn.active-status { background: var(--ink); color: white; border-color: var(--ink); }
-
-    /* BPI list */
+    /* BPI */
     .bpi-list { display: flex; flex-direction: column; gap: 8px; }
-
-    .bpi-card {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      padding: 12px 14px;
+    .bpi-item { background: var(--paper); border: 1px solid var(--border); padding: 12px 14px; }
+    .bpi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .bpi-num  { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--accent); }
+    .bpi-right { display: flex; align-items: center; gap: 8px; }
+    .bpi-type-badge { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; border: 1px solid var(--border); color: var(--muted); }
+    .btn-edit-bpi {
+      display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px;
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; transition: all .12s;
     }
+    .btn-edit-bpi:hover { border-color: var(--blue); color: var(--blue); background: #edf2fd; }
+    .btn-edit-bpi svg { width: 11px; height: 11px; }
 
-    .bpi-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
+    .bpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; font-size: 12px; }
+    .bpi-f { display: flex; gap: 5px; }
+    .bpi-fl { color: var(--muted); flex-shrink: 0; }
+    .bpi-fv { font-weight: 600; }
 
-    .bpi-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--accent);
-    }
-
-    .bpi-type {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      padding: 2px 8px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-
-    .bpi-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px 12px;
-      font-size: 12px;
-    }
-
-    .bpi-field { display: flex; gap: 6px; }
-    .bpi-field-label { color: var(--muted); flex-shrink: 0; }
-    .bpi-field-value { font-weight: 600; }
-
-    .bpi-preview {
-      margin-top: 8px;
-      border: 1px solid var(--border);
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 60px;
-      overflow: hidden;
-    }
-
-    .bpi-preview img { max-width: 100%; max-height: 100px; object-fit: contain; }
-    .bpi-preview-empty {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-    }
+    .bpi-comment { margin-top: 8px; padding: 7px 10px; background: white; border: 1px solid var(--border); border-left: 3px solid var(--blue); font-size: 12px; color: var(--muted); }
+    .bpi-comment strong { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--blue); display: block; margin-bottom: 3px; }
+    .bpi-preview { margin-top: 8px; border: 1px solid var(--border); background: white; }
+    .bpi-preview img { max-width: 100%; max-height: 100px; object-fit: contain; display: block; }
 
     .btn-add-bpi {
-      width: 100%;
-      padding: 10px;
-      border: 1.5px dashed var(--border);
-      background: transparent;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
+      width: 100%; margin-top: 10px; padding: 9px;
+      background: transparent; border: 1.5px dashed var(--border); color: var(--muted);
+      font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; transition: all .14s;
     }
-    .btn-add-bpi:hover { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+    .btn-add-bpi:hover { border-color: var(--ink); color: var(--ink); background: white; }
 
     /* Chat */
-    .chat-section {
-      padding: 20px;
-      border-top: 1px solid var(--border);
-      grid-column: 1 / -1;
-    }
-
-    .chat-messages {
-      max-height: 200px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .chat-msg {
-      display: flex;
-      gap: 10px;
-      font-size: 13px;
-    }
-
-    .chat-avatar {
-      width: 28px; height: 28px;
-      background: var(--ink);
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
-
-    .chat-bubble { flex: 1; }
+    .chat-col { padding: 18px 20px; border-top: 1px solid var(--border); grid-column: 1 / -1; }
+    .chat-msgs { max-height: 190px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .chat-msg { display: flex; gap: 10px; }
+    .chat-av { width: 28px; height: 28px; flex-shrink: 0; background: var(--ink); color: white; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 10px; }
+    .chat-body { flex: 1; }
     .chat-author { font-weight: 700; font-size: 12px; }
-    .chat-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-left: 8px; }
-    .chat-text { color: var(--ink); margin-top: 2px; line-height: 1.5; }
-
-    .chat-input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .chat-input {
-      flex: 1;
-      padding: 9px 12px;
-      border: 1.5px solid var(--border);
-      background: var(--paper);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--ink);
-      outline: none;
-    }
-    .chat-input:focus { border-color: var(--ink); background: white; }
-
-    .btn-send {
-      padding: 9px 16px;
-      background: var(--ink);
-      color: white;
-      border: none;
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      cursor: pointer;
-      transition: background 0.2s;
-      display: flex; align-items: center; gap: 6px;
-    }
+    .chat-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-left: 7px; }
+    .chat-text { font-size: 13px; margin-top: 2px; line-height: 1.5; color: var(--ink); }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-inp { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); background: var(--paper); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color .15s, background .15s; }
+    .chat-inp:focus { border-color: var(--ink); background: white; }
+    .btn-send { padding: 9px 14px; background: var(--ink); color: white; border: none; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .14s; }
     .btn-send:hover { background: var(--accent); }
-    .btn-send svg { width: 14px; height: 14px; }
+    .btn-send svg { width: 13px; height: 13px; }
 
-    /* ─── MODAL ─── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15,14,13,0.7);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(2px);
-    }
-    .modal-overlay.show { display: flex; }
-
+    /* Modales */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,14,13,.65); backdrop-filter: blur(3px); z-index: 200; align-items: center; justify-content: center; }
+    .overlay.show { display: flex; }
     .modal {
-      background: white;
-      border: 2px solid var(--ink);
-      box-shadow: 10px 10px 0 var(--ink);
-      width: 600px;
-      max-width: 95vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+      background: white; border: 2px solid var(--ink); box-shadow: 10px 10px 0 var(--ink);
+      width: 580px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+      animation: pop .22s cubic-bezier(.16,1,.3,1) both;
     }
+    .modal.wide { width: 660px; }
+    @keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .modal-header {
-      padding: 24px 28px 20px;
-      border-bottom: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .modal-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-
-    .modal-close {
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: transparent;
-      border: 1.5px solid var(--border);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
+    .modal-head { padding: 22px 26px 18px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .modal-close { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1.5px solid var(--border); cursor: pointer; transition: all .12s; }
     .modal-close:hover { background: var(--ink); color: white; border-color: var(--ink); }
-    .modal-close svg { width: 14px; height: 14px; }
+    .modal-close svg { width: 13px; height: 13px; }
+    .modal-body { padding: 22px 26px; }
+    .modal-foot { padding: 14px 26px 22px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
 
-    .modal-body { padding: 24px 28px; }
+    /* Formulaire */
+    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ff { display: flex; flex-direction: column; gap: 6px; }
+    .ff.full { grid-column: 1 / -1; }
+    .ff label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+    .ff label em { color: var(--accent); font-style: normal; font-size: 9px; margin-left: 4px; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    .fi, .fs, .ft {
+      padding: 10px 13px; border: 1.5px solid var(--border); background: var(--paper);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
+      outline: none; width: 100%; transition: border-color .15s, background .15s;
     }
-
-    .form-field { display: flex; flex-direction: column; gap: 6px; }
-    .form-field.full { grid-column: 1 / -1; }
-
-    .form-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .fi:focus, .fs:focus, .ft:focus { border-color: var(--ink); background: white; }
+    .fs {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 30px; background-color: var(--paper);
     }
+    .ft { resize: vertical; min-height: 72px; }
+    .fi-ro { padding: 10px 13px; background: #edeae3; border: 1.5px solid var(--border); font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+    .fi-ro svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .inp-cm { position: relative; display: flex; align-items: center; }
+    .inp-cm input { padding-right: 36px; }
+    .inp-cm span { position: absolute; right: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); pointer-events: none; }
 
-    .form-input, .form-select, .form-textarea {
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      background: var(--paper);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--ink);
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      width: 100%;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--ink);
-      background: white;
-    }
-    .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a867e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-
-    .form-textarea { resize: vertical; min-height: 80px; }
-
-    .modal-footer {
-      padding: 16px 28px 24px;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      border-top: 1px solid var(--border);
-    }
-
-    /* Section tabs in modal */
-    .modal-tabs {
-      display: flex;
-      border-bottom: 1.5px solid var(--border);
-      margin-bottom: 24px;
-    }
-    .modal-tab {
-      padding: 10px 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1.5px;
-      color: var(--muted);
-      transition: all 0.15s;
-    }
-    .modal-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* File upload */
-    .file-upload {
-      border: 1.5px dashed var(--border);
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: var(--paper);
-    }
-    .file-upload:hover { border-color: var(--ink); background: white; }
-    .file-upload-text { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-    .file-upload input { display: none; }
-
-    .file-preview {
-      margin-top: 10px;
-      max-width: 100%;
-      max-height: 120px;
-      display: none;
-      object-fit: contain;
-    }
-
-    /* Matière conditionnelle */
-    .matiere-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .card-body-inner { grid-template-columns: 1fr; }
-      .detail-section { border-right: none; border-bottom: 1px solid var(--border); }
-      .form-grid { grid-template-columns: 1fr; }
-      .form-field.full { grid-column: 1; }
-      .sidebar { transform: translateX(-100%); }
-      .main { margin-left: 0; }
-    }
+    .upload-zone { border: 1.5px dashed var(--border); padding: 18px; text-align: center; cursor: pointer; background: var(--paper); transition: all .15s; }
+    .upload-zone:hover { border-color: var(--ink); background: white; }
+    .upload-zone input { display: none; }
+    .upload-txt { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+    .upload-preview { margin-top: 10px; max-width: 100%; max-height: 110px; object-fit: contain; display: none; }
 
     /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--muted);
-    }
-    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.4; }
-    .empty-state-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .empty { text-align: center; padding: 72px 20px; color: var(--muted); }
+    .empty svg { width: 44px; height: 44px; margin-bottom: 14px; opacity: .35; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+
+    /* Loading state */
+    .loading-state { text-align: center; padding: 72px 20px; color: var(--muted); }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 22px; right: 22px; z-index: 500; background: var(--ink); color: white; padding: 11px 18px; font-family: 'DM Mono', monospace; font-size: 12px; transform: translateY(70px); opacity: 0; transition: all .28s; pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-thumb { background: var(--border); }
     ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-    /* Notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--ink);
-      color: white;
-      padding: 12px 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      z-index: 1000;
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all 0.3s;
+    @media (max-width: 860px) {
+      .card-cols { grid-template-columns: 1fr; }
+      .col { border-right: none; border-bottom: 1px solid var(--border); }
+      .fg { grid-template-columns: 1fr; }
+      .ff.full { grid-column: 1; }
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- ══ SIDEBAR ══ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24"><path d="M5 4h14a1 1 0 011 1v3H4V5a1 1 0 011-1zm-1 6h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1V10zm4 3v2h2v-2H8zm4 0v2h2v-2h-2z"/></svg>
-    </div>
-    <span class="logo-name">Print<span>Flow</span></span>
+    <div class="logo-sq"><svg viewBox="0 0 24 24"><path d="M5 4h14a1 1 0 011 1v3H4V5a1 1 0 011-1zm-1 6h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1V10zm4 3v2h2v-2H8zm4 0v2h2v-2h-2z"/></svg></div>
+    <span class="logo-name">Print<em>Flow</em></span>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-label">Navigation</div>
-    <div class="nav-item active">
+    <div class="nav-section">Affichage</div>
+    <div class="nav-item active" id="nav-all" onclick="filterByStatus('')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
-      Demandes
-    </div>
-    <div class="nav-label" style="margin-top:20px;">Statuts</div>
-    <div class="nav-item" onclick="filterByStatus('brouillon')">
-      <span class="card-status status-brouillon"></span> Brouillon
-    </div>
-    <div class="nav-item" onclick="filterByStatus('en_cours')">
-      <span class="card-status status-en_cours"></span> En cours
-    </div>
-    <div class="nav-item" onclick="filterByStatus('produit')">
-      <span class="card-status status-produit"></span> Produit
-    </div>
-    <div class="nav-item" onclick="filterByStatus('expedie')">
-      <span class="card-status status-expedie"></span> Expédié
-    </div>
-    <div class="nav-item" onclick="filterByStatus('')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       Tout afficher
     </div>
+    <div class="nav-section">Par statut</div>
+    <div class="nav-item" id="nav-brouillon" onclick="filterByStatus('brouillon')"><span class="dot dot-brouillon"></span> Brouillon</div>
+    <div class="nav-item" id="nav-en_cours"  onclick="filterByStatus('en_cours')"><span class="dot dot-en_cours"></span> En cours</div>
+    <div class="nav-item" id="nav-produit"   onclick="filterByStatus('produit')"><span class="dot dot-produit"></span> Produit</div>
+    <div class="nav-item" id="nav-expedie"   onclick="filterByStatus('expedie')"><span class="dot dot-expedie"></span> Expédié</div>
   </nav>
   <div class="sidebar-user">
-    <div class="user-name" id="user-name">—</div>
-    <div class="user-info" id="user-email">—</div>
+    <div class="user-name"  id="user-name">—</div>
+    <div class="user-email" id="user-email">—</div>
     <button class="btn-logout" onclick="logout()">← Déconnexion</button>
   </div>
 </aside>
 
-<!-- MAIN -->
+<!-- ══ MAIN ══ -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-title">Tableau de bord</div>
-    <div class="topbar-actions">
+    <div class="topbar-right">
+      <div class="fb-status">
+        <div class="fb-dot" id="fb-dot"></div>
+        <span id="fb-label">Firebase…</span>
+      </div>
       <button class="btn-primary" onclick="openNewDemande()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
         Nouvelle demande
@@ -779,60 +353,98 @@
   </div>
 
   <div class="filters-bar">
-    <div class="search-box">
+    <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="search-input" placeholder="Rechercher client, commande…" oninput="renderList()"/>
     </div>
-    <select class="filter-select" id="filter-status" onchange="renderList()">
+    <select class="f-select" id="filter-status" onchange="renderList()">
       <option value="">Tous les statuts</option>
       <option value="brouillon">Brouillon</option>
       <option value="en_cours">En cours</option>
       <option value="produit">Produit</option>
       <option value="expedie">Expédié</option>
     </select>
-    <select class="filter-select" id="filter-expedition" onchange="renderList()">
+    <select class="f-select" id="filter-expedition" onchange="renderList()">
       <option value="">Toute expédition</option>
       <option value="a_emporter">À emporter</option>
       <option value="a_livrer">À livrer</option>
       <option value="tnt">TNT</option>
     </select>
-    <span class="count-badge" id="count-badge">0 demande(s)</span>
+    <span class="count-lbl" id="count-lbl">— demande(s)</span>
   </div>
 
   <div class="content">
-    <div class="requests-grid" id="requests-grid"></div>
+    <div id="requests-list">
+      <div class="loading-state"><div class="spinner"></div>Chargement depuis Firebase…</div>
+    </div>
   </div>
 </main>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- MODAL: NOUVELLE DEMANDE -->
-<div class="modal-overlay" id="modal-demande">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-demande-title">Nouvelle demande</div>
-      <button class="modal-close" onclick="closeModal('modal-demande')">
+<!-- ══ MODALE — CONFIRMATION SUPPRESSION ══ -->
+<div class="overlay" id="overlay-confirm">
+  <div class="modal" style="width:440px;">
+    <div class="modal-head" style="border-bottom-color:#fde8e4;">
+      <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+        <span style="width:32px;height:32px;background:#fde8e4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        </span>
+        Supprimer la demande
+      </div>
+      <button class="modal-close" onclick="closeModal('overlay-confirm')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-field">
-          <label class="form-label">Nom du client *</label>
-          <input type="text" class="form-input" id="d-client" placeholder="Ex: Société ABC"/>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;">
+        Êtes-vous sûr de vouloir supprimer la demande<br>
+        <strong id="confirm-label" style="color:var(--ink);font-size:16px;"></strong> ?
+      </p>
+      <p style="font-size:12px;font-family:'DM Mono',monospace;color:var(--accent);margin-top:10px;padding:8px 12px;background:#fde8e4;">
+        ⚠ Cette action est irréversible.
+      </p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-confirm')">Annuler</button>
+      <button class="btn-primary" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDelete()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+        Supprimer définitivement
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALE — NOUVELLE DEMANDE ══ -->
+<div class="overlay" id="overlay-demande">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Nouvelle demande</div>
+      <button class="modal-close" onclick="closeModal('overlay-demande')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="ff">
+          <label>Nom du client <em>*</em></label>
+          <input type="text" class="fi" id="d-client" placeholder="Ex : Mairie de Lyon"/>
         </div>
-        <div class="form-field">
-          <label class="form-label">N° de commande</label>
-          <input type="text" class="form-input" id="d-commande" placeholder="CMD-2025-001"/>
+        <div class="ff">
+          <label>N° commande</label>
+          <div class="fi-ro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Généré automatiquement
+          </div>
         </div>
-        <div class="form-field">
-          <label class="form-label">Date de livraison *</label>
-          <input type="date" class="form-input" id="d-livraison"/>
+        <div class="ff">
+          <label>Date de livraison <em>*</em></label>
+          <input type="date" class="fi" id="d-livraison"/>
         </div>
-        <div class="form-field">
-          <label class="form-label">Méthode d'expédition *</label>
-          <select class="form-select" id="d-expedition">
+        <div class="ff">
+          <label>Méthode d'expédition <em>*</em></label>
+          <select class="fs" id="d-expedition">
             <option value="">Choisir…</option>
             <option value="a_emporter">À emporter</option>
             <option value="a_livrer">À livrer</option>
@@ -841,9 +453,9 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-demande')">Annuler</button>
-      <button class="btn-primary" onclick="saveDemande()">
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-demande')">Annuler</button>
+      <button class="btn-primary" id="btn-save-demande" onclick="saveDemande()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
         Créer la demande
       </button>
@@ -851,68 +463,85 @@
   </div>
 </div>
 
-<!-- MODAL: AJOUTER BPI -->
-<div class="modal-overlay" id="modal-bpi">
-  <div class="modal" style="width:640px;">
-    <div class="modal-header">
-      <div class="modal-title">Ajouter un BPI</div>
-      <button class="modal-close" onclick="closeModal('modal-bpi')">
+<!-- ══ MODALE — BPI ══ -->
+<div class="overlay" id="overlay-bpi">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div class="modal-title" id="bpi-modal-title">Ajouter un BPI</div>
+      <button class="modal-close" onclick="closeModal('overlay-bpi')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-field">
-          <label class="form-label">Nom du client *</label>
-          <input type="text" class="form-input" id="b-client" placeholder="Société ABC"/>
+      <div class="fg">
+        <div class="ff">
+          <label>Nom du client <em>*</em></label>
+          <input type="text" class="fi" id="b-client" placeholder="Ex : Mairie de Lyon"/>
         </div>
-        <div class="form-field">
-          <label class="form-label">N° de commande</label>
-          <input type="text" class="form-input" id="b-commande" placeholder="CMD-2025-001"/>
+        <div class="ff">
+          <label>N° de commande</label>
+          <div class="fi-ro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span id="b-commande-display">—</span>
+          </div>
         </div>
-        <div class="form-field">
-          <label class="form-label">Format (largeur)</label>
-          <input type="text" class="form-input" id="b-format-l" placeholder="150cm"/>
+        <div class="ff">
+          <label>Largeur <em>* cm</em></label>
+          <div class="inp-cm">
+            <input type="number" class="fi" id="b-format-l" placeholder="150" min="1" step="0.1"/>
+            <span>cm</span>
+          </div>
         </div>
-        <div class="form-field">
-          <label class="form-label">Format (hauteur)</label>
-          <input type="text" class="form-input" id="b-format-h" placeholder="200cm"/>
+        <div class="ff">
+          <label>Hauteur <em>* cm</em></label>
+          <div class="inp-cm">
+            <input type="number" class="fi" id="b-format-h" placeholder="200" min="1" step="0.1"/>
+            <span>cm</span>
+          </div>
         </div>
-        <div class="form-field">
-          <label class="form-label">Type *</label>
-          <select class="form-select" id="b-type" onchange="updateMatieres()">
+        <div class="ff">
+          <label>Type <em>*</em></label>
+          <select class="fs" id="b-type" onchange="onTypeChange()">
             <option value="">Choisir…</option>
             <option value="souple">Souple</option>
             <option value="rigide">Rigide</option>
           </select>
         </div>
-        <div class="form-field">
-          <label class="form-label">Matière *</label>
-          <select class="form-select" id="b-matiere">
+        <div class="ff">
+          <label>Matière <em>*</em></label>
+          <select class="fs" id="b-matiere">
             <option value="">Choisir le type d'abord</option>
           </select>
         </div>
-        <div class="form-field">
-          <label class="form-label">Épaisseur</label>
-          <input type="text" class="form-input" id="b-epaisseur" placeholder="Ex: 3mm, 500g/m²"/>
+        <div class="ff" id="ff-epaisseur" style="display:none;">
+          <label>Épaisseur <em>rigide uniquement</em></label>
+          <input type="text" class="fi" id="b-epaisseur" placeholder="Ex : 3mm, 5mm…"/>
         </div>
-        <div class="form-field">
-          <label class="form-label">Nombre d'exemplaires *</label>
-          <input type="number" class="form-input" id="b-exemplaires" min="1" placeholder="1"/>
+        <div class="ff">
+          <label>Nombre d'exemplaires <em>*</em></label>
+          <input type="number" class="fi" id="b-exemplaires" min="1" placeholder="1"/>
         </div>
-        <div class="form-field full">
-          <label class="form-label">Aperçu visuel (optionnel)</label>
-          <label class="file-upload" id="bpi-upload-label">
-            <input type="file" id="b-visuel" accept="image/*" onchange="previewImage(this)"/>
-            <div class="file-upload-text">📁 Cliquer pour ajouter un visuel (JPG, PNG, PDF…)</div>
-            <img class="file-preview" id="b-preview" alt="Aperçu"/>
+        <div class="ff full">
+          <label>Finition</label>
+          <input type="text" class="fi" id="b-finition" placeholder="Ex : Ourlet, œillets, pelliculage mat…"/>
+        </div>
+        <div class="ff full">
+          <label>Commentaire</label>
+          <textarea class="ft" id="b-commentaire" placeholder="Remarques, instructions particulières…" rows="3"></textarea>
+        </div>
+        <div class="ff full">
+          <label>Aperçu visuel (optionnel)</label>
+          <label class="upload-zone">
+            <input type="file" id="b-visuel" accept="image/*" onchange="previewImg(this)"/>
+            <div class="upload-txt">📁 Cliquer pour ajouter un visuel (JPG, PNG…)</div>
+            <img class="upload-preview" id="b-preview" alt="Aperçu"/>
           </label>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-bpi')">Annuler</button>
-      <button class="btn-primary" onclick="saveBPI()">
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-bpi')">Annuler</button>
+      <button class="btn-primary" id="btn-save-bpi" onclick="saveBPI()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
         Ajouter le BPI
       </button>
@@ -920,415 +549,535 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
-// ─── AUTH ───────────────────────────────────────────
-const userRaw = sessionStorage.getItem('pf_user');
-if (!userRaw) window.location.href = 'index.html';
-const currentUser = JSON.parse(userRaw || '{}');
-document.getElementById('user-name').textContent = currentUser.name || '—';
-document.getElementById('user-email').textContent = currentUser.email || '—';
+'use strict';
 
-function logout() {
-  sessionStorage.removeItem('pf_user');
-  window.location.href = 'index.html';
+/* ══════════════════════════════════════════
+   ⚙️  CONFIGURATION FIREBASE
+   Copiez-collez ici les mêmes valeurs
+   que dans index.html
+══════════════════════════════════════════ */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBCHa03MhQUMFc2xBggzAqvxDitomALiAk",
+  authDomain:        "gestion-de-demandes.firebaseapp.com",
+  projectId:         "gestion-de-demandes",
+  storageBucket:     "gestion-de-demandes.firebasestorage.app",
+  messagingSenderId: "300350796313",
+  appId:             "1:300350796313:web:8054d934e7ff408338b088"
+};
+/* ══════════════════════════════════════════ */
+
+/* ── Auth session ── */
+const _raw = sessionStorage.getItem('pf_user');
+if (!_raw) { location.href = 'index.html'; }
+const ME = JSON.parse(_raw || '{}');
+document.getElementById('user-name').textContent  = ME.name  || '—';
+document.getElementById('user-email').textContent = ME.email || '—';
+function logout() { sessionStorage.removeItem('pf_user'); location.href = 'index.html'; }
+
+/* ── Init Firebase ── */
+firebase.initializeApp(FIREBASE_CONFIG);
+const DB = firebase.firestore();
+const COL = DB.collection('demandes');
+
+/* Indicateur de connexion */
+function setFbStatus(ok, label) {
+  document.getElementById('fb-dot').className   = 'fb-dot ' + (ok ? 'ok' : 'error');
+  document.getElementById('fb-label').textContent = label;
 }
 
-// ─── DATA ────────────────────────────────────────────
-const STORAGE_KEY = 'printflow_v1';
+/* ── Données locales (cache) ── */
+let CACHE = [];        // copie locale pour rendu synchrone
+let _unsubscribe = null;
 
-function loadData() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-let demandes = loadData();
-let currentBpiDemandeId = null;
-
-// Sample data if empty
-if (demandes.length === 0) {
-  demandes = [
-    {
-      id: 'dem_001',
-      client: 'Mairie de Lyon',
-      commande: 'CMD-2025-001',
-      livraison: '2025-03-20',
-      expedition: 'a_livrer',
-      statut: 'en_cours',
-      createur: 'Sophie Martin',
-      createurEmail: 'sophie@atelier.fr',
-      createdAt: new Date(Date.now() - 86400000*2).toISOString(),
-      bpis: [
-        { id: 'bpi_001', client: 'Mairie de Lyon', commande: 'CMD-2025-001', formatL: '200cm', formatH: '100cm', type: 'souple', matiere: 'Bâche', epaisseur: '510g/m²', exemplaires: 5, visuel: null }
-      ],
-      messages: [
-        { id: 'msg_001', author: 'Sophie Martin', email: 'sophie@atelier.fr', text: 'Demande créée. Visuels à valider.', time: new Date(Date.now() - 86400000*2).toISOString() },
-        { id: 'msg_002', author: 'Administrateur', email: 'admin@atelier.fr', text: 'OK reçu, on lance la prod demain.', time: new Date(Date.now() - 86400000).toISOString() }
-      ]
+/* ── Écoute temps réel ── */
+function startListener() {
+  if (_unsubscribe) _unsubscribe();
+  _unsubscribe = COL.orderBy('createdAt', 'desc').onSnapshot(
+    snap => {
+      CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setFbStatus(true, 'Connecté');
+      renderList();
+    },
+    err => {
+      console.error(err);
+      setFbStatus(false, 'Erreur Firebase');
+      document.getElementById('requests-list').innerHTML = `
+        <div class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <div class="empty-title">Impossible de charger les données</div>
+          <p>Vérifiez votre connexion et la configuration Firebase.</p>
+        </div>`;
     }
-  ];
-  saveData(demandes);
+  );
 }
 
-// ─── RENDER ──────────────────────────────────────────
-const STATUT_LABELS = { brouillon: 'Brouillon', en_cours: 'En cours', produit: 'Produit', expedie: 'Expédié' };
-const EXPEDITION_LABELS = { a_emporter: 'À emporter', a_livrer: 'À livrer', tnt: 'TNT' };
+/* ══════════════════════════════
+   RENDU
+══════════════════════════════ */
+const STATUTS     = { brouillon: 'Brouillon', en_cours: 'En cours', produit: 'Produit', expedie: 'Expédié' };
+const EXPEDITIONS = { a_emporter: 'À emporter', a_livrer: 'À livrer', tnt: 'TNT' };
 
 function renderList() {
-  const search = document.getElementById('search-input').value.toLowerCase();
-  const filterStatus = document.getElementById('filter-status').value;
-  const filterExp = document.getElementById('filter-expedition').value;
+  const q    = document.getElementById('search-input').value.toLowerCase();
+  const fSt  = document.getElementById('filter-status').value;
+  const fExp = document.getElementById('filter-expedition').value;
 
-  let list = demandes.filter(d => {
-    const matchSearch = !search ||
-      d.client.toLowerCase().includes(search) ||
-      (d.commande || '').toLowerCase().includes(search) ||
-      d.createur.toLowerCase().includes(search);
-    const matchStatus = !filterStatus || d.statut === filterStatus;
-    const matchExp = !filterExp || d.expedition === filterExp;
-    return matchSearch && matchStatus && matchExp;
+  const list = CACHE.filter(d => {
+    const ok_q   = !q   || (d.client||'').toLowerCase().includes(q) || (d.commande||'').toLowerCase().includes(q) || (d.createur||'').toLowerCase().includes(q);
+    const ok_st  = !fSt  || d.statut     === fSt;
+    const ok_exp = !fExp || d.expedition  === fExp;
+    return ok_q && ok_st && ok_exp;
   });
 
-  // Sort newest first
-  list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  document.getElementById('count-lbl').textContent = `${list.length} demande(s)`;
 
-  document.getElementById('count-badge').textContent = `${list.length} demande(s)`;
-
-  const grid = document.getElementById('requests-grid');
+  const container = document.getElementById('requests-list');
   if (list.length === 0) {
-    grid.innerHTML = `<div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
-      <div class="empty-state-title">Aucune demande</div>
-      <div>Créez votre première demande avec le bouton en haut à droite.</div>
-    </div>`;
+    container.innerHTML = `
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
+        <div class="empty-title">Aucune demande</div>
+        <p>Créez votre première demande ou modifiez les filtres.</p>
+      </div>`;
     return;
   }
-
-  grid.innerHTML = list.map(d => renderCard(d)).join('');
+  container.innerHTML = list.map(d => cardHTML(d)).join('');
 }
 
-function renderCard(d) {
-  const date = d.livraison ? new Date(d.livraison).toLocaleDateString('fr-FR') : '—';
-  const created = new Date(d.createdAt).toLocaleDateString('fr-FR');
+function cardHTML(d) {
+  const liv  = d.livraison ? new Date(d.livraison + 'T00:00:00').toLocaleDateString('fr-FR') : '—';
+  const cre  = d.createdAt ? new Date(d.createdAt).toLocaleDateString('fr-FR') : '—';
+  const bpis = d.bpis || [];
+  const msgs = d.messages || [];
+  const thumb= bpis.find(b => b.visuel)?.visuel || null;
+  const isBrouillon = d.statut === 'brouillon';
+
   return `
-  <div class="request-card" id="card-${d.id}">
-    <div class="card-header" onclick="toggleCard('${d.id}')">
-      <div class="card-status status-${d.statut}"></div>
-      <div class="card-meta">
-        <div class="card-client">${esc(d.client)}</div>
-        <div class="card-info">${esc(d.commande || '—')} · Livraison : ${date} · ${EXPEDITION_LABELS[d.expedition] || '—'} · Par ${esc(d.createur)}</div>
-      </div>
-      <div class="card-pills">
-        <span class="pill pill-${d.statut}">${STATUT_LABELS[d.statut]}</span>
-        <span class="card-bpi-count">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 12h8M8 8h8M8 16h5"/></svg>
-          ${d.bpis.length} BPI
-        </span>
-      </div>
-      <div class="card-chevron" id="chev-${d.id}">
+<div class="req-card" id="card-${d.id}">
+  <div class="card-head" onclick="toggleCard('${d.id}')">
+    <div class="card-dot dot-${d.statut}"></div>
+    ${thumb ? `<img class="card-thumb" src="${thumb}" alt=""/>` : ''}
+    <div class="card-meta">
+      <div class="card-num">${esc(d.commande||'—')}</div>
+      <div class="card-client">${esc(d.client)}</div>
+      <div class="card-info">Livraison ${liv} · ${EXPEDITIONS[d.expedition]||'—'} · ${esc(d.createur)}</div>
+    </div>
+    <div class="card-right">
+      <span class="pill pill-${d.statut}">${STATUTS[d.statut]}</span>
+      <span class="bpi-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        ${bpis.length} BPI
+      </span>
+      <button class="btn-del" title="Supprimer la demande" onclick="event.stopPropagation();askDelete('${d.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+      </button>
+      <div class="chevron" id="chev-${d.id}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>
     </div>
-    <div class="card-body" id="body-${d.id}">
-      <div class="card-body-inner">
-        <!-- Detail -->
-        <div class="detail-section">
-          <div class="section-title">Détails de la demande</div>
-          <div class="detail-row"><span class="detail-label">Client</span><span class="detail-value">${esc(d.client)}</span></div>
-          <div class="detail-row"><span class="detail-label">Commande</span><span class="detail-value">${esc(d.commande || '—')}</span></div>
-          <div class="detail-row"><span class="detail-label">Livraison</span><span class="detail-value">${date}</span></div>
-          <div class="detail-row"><span class="detail-label">Expédition</span><span class="detail-value">${EXPEDITION_LABELS[d.expedition] || '—'}</span></div>
-          <div class="detail-row"><span class="detail-label">Créé le</span><span class="detail-value">${created}</span></div>
-          <div class="detail-row"><span class="detail-label">Créateur</span><span class="detail-value">${esc(d.createur)}</span></div>
-          <div class="section-title" style="margin-top:20px;">Changer le statut</div>
-          <div class="status-changer">
-            ${['brouillon','en_cours','produit','expedie'].map(s =>
-              `<button class="status-btn ${d.statut === s ? 'active-status' : ''}" onclick="changeStatus('${d.id}','${s}')">${STATUT_LABELS[s]}</button>`
-            ).join('')}
-          </div>
-        </div>
-        <!-- BPIs -->
-        <div class="detail-section">
-          <div class="section-title">
-            Bons pour impression
-            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent)">${d.bpis.length} BPI</span>
-          </div>
-          <div class="bpi-list" id="bpi-list-${d.id}">
-            ${d.bpis.map((b, i) => renderBPI(b, i)).join('')}
-          </div>
-          <button class="btn-add-bpi" onclick="openAddBPI('${d.id}')">+ Ajouter un BPI</button>
+  </div>
+
+  <div class="card-body" id="body-${d.id}">
+    <div class="card-cols">
+      <div class="col">
+        <div class="col-title">Détails</div>
+        <div class="detail-row"><span class="dl">N° commande</span><span class="dv mono">${esc(d.commande||'—')}</span></div>
+        <div class="detail-row"><span class="dl">Client</span><span class="dv">${esc(d.client)}</span></div>
+        <div class="detail-row"><span class="dl">Livraison</span><span class="dv">${liv}</span></div>
+        <div class="detail-row"><span class="dl">Expédition</span><span class="dv">${EXPEDITIONS[d.expedition]||'—'}</span></div>
+        <div class="detail-row"><span class="dl">Créé le</span><span class="dv">${cre}</span></div>
+        <div class="detail-row"><span class="dl">Créateur</span><span class="dv">${esc(d.createur)}</span></div>
+        <div class="col-title" style="margin-top:18px;">Changer le statut</div>
+        <div class="status-btns">
+          ${Object.entries(STATUTS).map(([k,v]) =>
+            `<button class="s-btn ${d.statut===k?'on':''}" onclick="changeStatus('${d.id}','${k}')">${v}</button>`
+          ).join('')}
         </div>
       </div>
-      <!-- Chat -->
-      <div class="chat-section">
-        <div class="section-title">Discussion (${d.messages.length} message(s))</div>
-        <div class="chat-messages" id="chat-${d.id}">
-          ${d.messages.map(m => renderMsg(m)).join('')}
+      <div class="col">
+        <div class="col-title">
+          Bons pour impression
+          <span style="color:var(--accent)">${bpis.length} BPI</span>
         </div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chat-input-${d.id}" placeholder="Écrire un message…" onkeydown="if(event.key==='Enter')sendMsg('${d.id}')"/>
-          <button class="btn-send" onclick="sendMsg('${d.id}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-            Envoyer
-          </button>
+        <div class="bpi-list">
+          ${bpis.map((b,i) => bpiHTML(b, i, d.id, isBrouillon)).join('')}
         </div>
+        <button class="btn-add-bpi" onclick="openAddBPI('${d.id}')">+ Ajouter un BPI</button>
       </div>
     </div>
-  </div>`;
+    <div class="chat-col">
+      <div class="col-title" style="margin-bottom:12px;">Discussion <span>${msgs.length} message(s)</span></div>
+      <div class="chat-msgs" id="chat-${d.id}">
+        ${msgs.map(m => msgHTML(m)).join('')}
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-inp" id="cinp-${d.id}" placeholder="Écrire un message…" onkeydown="if(event.key==='Enter')sendMsg('${d.id}')"/>
+        <button class="btn-send" onclick="sendMsg('${d.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          Envoyer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>`;
 }
 
-function renderBPI(b, i) {
-  return `<div class="bpi-card">
-    <div class="bpi-header">
-      <span class="bpi-num">BPI #${String(i+1).padStart(2,'0')}</span>
-      <span class="bpi-type">${b.type === 'souple' ? '🪁 Souple' : '🔩 Rigide'}</span>
+function bpiHTML(b, i, demandeId, isBrouillon) {
+  return `
+<div class="bpi-item">
+  <div class="bpi-head">
+    <span class="bpi-num">BPI #${String(i+1).padStart(2,'0')}</span>
+    <div class="bpi-right">
+      <span class="bpi-type-badge">${b.type === 'souple' ? '🪁 Souple' : '🔩 Rigide'}</span>
+      ${isBrouillon ? `
+      <button class="btn-edit-bpi" onclick="openEditBPI('${demandeId}','${b.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Modifier
+      </button>` : ''}
     </div>
-    <div class="bpi-grid">
-      <div class="bpi-field"><span class="bpi-field-label">Client :</span><span class="bpi-field-value">${esc(b.client)}</span></div>
-      <div class="bpi-field"><span class="bpi-field-label">Cmd :</span><span class="bpi-field-value">${esc(b.commande || '—')}</span></div>
-      <div class="bpi-field"><span class="bpi-field-label">Format :</span><span class="bpi-field-value">${esc(b.formatL)} × ${esc(b.formatH)}</span></div>
-      <div class="bpi-field"><span class="bpi-field-label">Matière :</span><span class="bpi-field-value">${esc(b.matiere)}</span></div>
-      <div class="bpi-field"><span class="bpi-field-label">Épaisseur :</span><span class="bpi-field-value">${esc(b.epaisseur || '—')}</span></div>
-      <div class="bpi-field"><span class="bpi-field-label">Qté :</span><span class="bpi-field-value">${b.exemplaires} ex.</span></div>
-    </div>
-    ${b.visuel ? `<div class="bpi-preview"><img src="${b.visuel}" alt="Aperçu"/></div>` : ''}
-  </div>`;
+  </div>
+  <div class="bpi-grid">
+    <div class="bpi-f"><span class="bpi-fl">Client :</span><span class="bpi-fv">${esc(b.client)}</span></div>
+    <div class="bpi-f"><span class="bpi-fl">Cmd :</span><span class="bpi-fv">${esc(b.commande||'—')}</span></div>
+    <div class="bpi-f"><span class="bpi-fl">Format :</span><span class="bpi-fv">${esc(b.formatL)} × ${esc(b.formatH)}</span></div>
+    <div class="bpi-f"><span class="bpi-fl">Matière :</span><span class="bpi-fv">${esc(b.matiere)}</span></div>
+    ${b.epaisseur ? `<div class="bpi-f"><span class="bpi-fl">Épaisseur :</span><span class="bpi-fv">${esc(b.epaisseur)}</span></div>` : ''}
+    <div class="bpi-f"><span class="bpi-fl">Qté :</span><span class="bpi-fv">${b.exemplaires} ex.</span></div>
+    ${b.finition ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finition :</span><span class="bpi-fv">${esc(b.finition)}</span></div>` : ''}
+  </div>
+  ${b.commentaire ? `<div class="bpi-comment"><strong>Commentaire</strong>${esc(b.commentaire)}</div>` : ''}
+  ${b.visuel ? `<div class="bpi-preview"><img src="${b.visuel}" alt="Aperçu"/></div>` : ''}
+</div>`;
 }
 
-function renderMsg(m) {
-  const initials = m.author.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+function msgHTML(m) {
+  const ini  = (m.author||'?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
   const time = new Date(m.time).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-  return `<div class="chat-msg">
-    <div class="chat-avatar" title="${esc(m.author)}">${initials}</div>
-    <div class="chat-bubble">
-      <span class="chat-author">${esc(m.author)}</span>
-      <span class="chat-time">${time}</span>
-      <div class="chat-text">${esc(m.text)}</div>
-    </div>
-  </div>`;
+  return `
+<div class="chat-msg">
+  <div class="chat-av" title="${esc(m.author)}">${ini}</div>
+  <div class="chat-body">
+    <span class="chat-author">${esc(m.author)}</span>
+    <span class="chat-time">${time}</span>
+    <div class="chat-text">${esc(m.text)}</div>
+  </div>
+</div>`;
 }
 
-// ─── TOGGLE CARD ──────────────────────────────────────
+/* ══════════════════════════════
+   TOGGLE CARTE
+══════════════════════════════ */
 function toggleCard(id) {
   const body = document.getElementById('body-' + id);
   const chev = document.getElementById('chev-' + id);
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  chev.classList.toggle('open', !isOpen);
-  if (!isOpen) {
-    // scroll chat to bottom
-    setTimeout(() => {
-      const chat = document.getElementById('chat-' + id);
-      if (chat) chat.scrollTop = chat.scrollHeight;
-    }, 50);
-  }
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+  if (open) setTimeout(() => {
+    const c = document.getElementById('chat-' + id);
+    if (c) c.scrollTop = c.scrollHeight;
+  }, 40);
 }
 
-// ─── STATUS ───────────────────────────────────────────
+/* ══════════════════════════════
+   STATUT (mise à jour Firestore)
+══════════════════════════════ */
 function changeStatus(id, status) {
-  const d = demandes.find(x => x.id === id);
-  if (!d) return;
-  d.statut = status;
-  saveData(demandes);
-  renderList();
-  // Re-open the card
-  setTimeout(() => {
-    const body = document.getElementById('body-' + id);
-    const chev = document.getElementById('chev-' + id);
-    if (body) { body.classList.add('open'); chev.classList.add('open'); }
-    scrollChatToBottom(id);
-  }, 10);
-  showToast(`Statut mis à jour : ${STATUT_LABELS[status]}`);
-}
-
-// ─── CHAT ─────────────────────────────────────────────
-function sendMsg(id) {
-  const input = document.getElementById('chat-input-' + id);
-  const text = (input.value || '').trim();
-  if (!text) return;
-  const d = demandes.find(x => x.id === id);
-  if (!d) return;
-  d.messages.push({
-    id: 'msg_' + Date.now(),
-    author: currentUser.name,
-    email: currentUser.email,
-    text,
-    time: new Date().toISOString()
-  });
-  saveData(demandes);
-  input.value = '';
-  // Re-render chat only
-  const chatEl = document.getElementById('chat-' + id);
-  if (chatEl) {
-    chatEl.innerHTML = d.messages.map(m => renderMsg(m)).join('');
-    chatEl.scrollTop = chatEl.scrollHeight;
+  COL.doc(id).update({ statut: status })
+    .then(() => showToast('Statut : ' + STATUTS[status]))
+    .catch(e => showToast('Erreur : ' + e.message));
+  /* Patch visuel immédiat (pas d'attente du snapshot) */
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    card.querySelector('.card-dot').className = `card-dot dot-${status}`;
+    const pill = card.querySelector('.pill');
+    if (pill) { pill.className = `pill pill-${status}`; pill.textContent = STATUTS[status]; }
+    card.querySelectorAll('.s-btn').forEach(b => b.classList.toggle('on', b.textContent === STATUTS[status]));
+    card.querySelectorAll('.btn-edit-bpi').forEach(b => { b.style.display = status === 'brouillon' ? '' : 'none'; });
   }
 }
 
-function scrollChatToBottom(id) {
-  const chat = document.getElementById('chat-' + id);
-  if (chat) chat.scrollTop = chat.scrollHeight;
+/* ══════════════════════════════
+   CHAT (mise à jour Firestore)
+══════════════════════════════ */
+function sendMsg(id) {
+  const inp = document.getElementById('cinp-' + id);
+  const txt = (inp.value || '').trim();
+  if (!txt) return;
+  inp.value = '';
+  const d = CACHE.find(x => x.id === id);
+  if (!d) return;
+  const msgs = [...(d.messages || []), { id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: txt, time: new Date().toISOString() }];
+  COL.doc(id).update({ messages: msgs })
+    .catch(e => showToast('Erreur envoi : ' + e.message));
 }
 
-// ─── NEW DEMANDE ──────────────────────────────────────
-let editingId = null;
-
+/* ══════════════════════════════
+   DEMANDE — CRÉATION
+══════════════════════════════ */
 function openNewDemande() {
-  editingId = null;
-  document.getElementById('modal-demande-title').textContent = 'Nouvelle demande';
-  ['d-client','d-commande','d-livraison','d-expedition'].forEach(id => {
-    document.getElementById(id).value = '';
+  ['d-client','d-livraison','d-expedition'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('btn-save-demande').disabled = false;
+  openModal('overlay-demande');
+}
+
+/* Génère le prochain numéro en scannant le cache */
+function genCmdNum() {
+  const yr     = new Date().getFullYear();
+  const prefix = 'F' + yr;
+  let max = 0;
+  CACHE.forEach(d => {
+    if (d.commande && d.commande.startsWith(prefix)) {
+      const n = parseInt(d.commande.slice(prefix.length), 10);
+      if (!isNaN(n) && n > max) max = n;
+    }
   });
-  openModal('modal-demande');
+  return prefix + String(max + 1).padStart(2, '0');
 }
 
 function saveDemande() {
-  const client = document.getElementById('d-client').value.trim();
-  const commande = document.getElementById('d-commande').value.trim();
-  const livraison = document.getElementById('d-livraison').value;
+  const client     = document.getElementById('d-client').value.trim();
+  const livraison  = document.getElementById('d-livraison').value;
   const expedition = document.getElementById('d-expedition').value;
+  if (!client || !livraison || !expedition) { showToast('Remplir les champs obligatoires (*)'); return; }
 
-  if (!client || !livraison || !expedition) {
-    showToast('Veuillez remplir les champs obligatoires (*)');
-    return;
-  }
+  const btn = document.getElementById('btn-save-demande');
+  btn.disabled = true;
 
+  const commande = genCmdNum();
   const newD = {
-    id: 'dem_' + Date.now(),
     client, commande, livraison, expedition,
     statut: 'brouillon',
-    createur: currentUser.name,
-    createurEmail: currentUser.email,
+    createur: ME.name, createurEmail: ME.email,
     createdAt: new Date().toISOString(),
     bpis: [],
-    messages: [{
-      id: 'msg_' + Date.now(),
-      author: currentUser.name,
-      email: currentUser.email,
-      text: `Demande créée pour ${client}.`,
-      time: new Date().toISOString()
-    }]
+    messages: [{ id: 'm_' + Date.now(), author: ME.name, email: ME.email, text: `Demande ${commande} créée pour ${client}.`, time: new Date().toISOString() }]
   };
 
-  demandes.unshift(newD);
-  saveData(demandes);
-  closeModal('modal-demande');
-  renderList();
-  showToast('Demande créée avec succès !');
+  COL.add(newD)
+    .then(ref => {
+      closeModal('overlay-demande');
+      resetAllFilters();
+      showToast(`Demande ${commande} créée !`);
+      /* Ouvrir la carte dès que le snapshot l'ajoute */
+      const tryOpen = setInterval(() => {
+        if (document.getElementById('body-' + ref.id)) {
+          clearInterval(tryOpen);
+          const body = document.getElementById('body-' + ref.id);
+          const chev = document.getElementById('chev-' + ref.id);
+          body.classList.add('open'); chev.classList.add('open');
+        }
+      }, 100);
+      setTimeout(() => clearInterval(tryOpen), 3000);
+    })
+    .catch(e => { showToast('Erreur Firebase : ' + e.message); btn.disabled = false; });
 }
 
-// ─── ADD BPI ──────────────────────────────────────────
+/* ══════════════════════════════
+   SUPPRESSION
+══════════════════════════════ */
+let _deleteId = null;
+
+function askDelete(id) {
+  const d = CACHE.find(x => x.id === id);
+  if (!d) return;
+  if (d.createurEmail !== ME.email) { showToast('Seul le créateur peut supprimer cette demande.'); return; }
+  _deleteId = id;
+  document.getElementById('confirm-label').textContent = `${d.commande} — ${d.client}`;
+  openModal('overlay-confirm');
+}
+
+function confirmDelete() {
+  if (!_deleteId) return;
+  COL.doc(_deleteId).delete()
+    .then(() => { showToast('Demande supprimée.'); })
+    .catch(e => showToast('Erreur : ' + e.message));
+  _deleteId = null;
+  closeModal('overlay-confirm');
+}
+
+/* ══════════════════════════════
+   BPI — CRÉATION / MODIFICATION
+══════════════════════════════ */
+let _bpiDemandeId = null;
+let _bpiEditId    = null;
+
 function openAddBPI(demandeId) {
-  currentBpiDemandeId = demandeId;
-  const d = demandes.find(x => x.id === demandeId);
-  ['b-client','b-commande','b-format-l','b-format-h','b-epaisseur'].forEach(id => document.getElementById(id).value = '');
+  _bpiDemandeId = demandeId;
+  _bpiEditId    = null;
+  resetBPIForm();
+  const d = CACHE.find(x => x.id === demandeId);
+  if (d) { document.getElementById('b-client').value = d.client; document.getElementById('b-commande-display').textContent = d.commande || '—'; }
+  document.getElementById('bpi-modal-title').textContent = 'Ajouter un BPI';
+  document.getElementById('btn-save-bpi').textContent = 'Ajouter le BPI';
+  openModal('overlay-bpi');
+}
+
+function openEditBPI(demandeId, bpiId) {
+  const d = CACHE.find(x => x.id === demandeId);
+  if (!d || d.statut !== 'brouillon') { showToast('Modification impossible : la demande n\'est plus en brouillon.'); return; }
+  const b = (d.bpis||[]).find(x => x.id === bpiId);
+  if (!b) return;
+  _bpiDemandeId = demandeId;
+  _bpiEditId    = bpiId;
+  resetBPIForm();
+  document.getElementById('b-client').value    = b.client || '';
+  document.getElementById('b-commande-display').textContent = d.commande || '—';
+  document.getElementById('b-format-l').value  = parseFloat(b.formatL) || '';
+  document.getElementById('b-format-h').value  = parseFloat(b.formatH) || '';
+  document.getElementById('b-exemplaires').value = b.exemplaires || 1;
+  document.getElementById('b-type').value      = b.type || '';
+  onTypeChange();
+  document.getElementById('b-matiere').value   = b.matiere || '';
+  if (b.type === 'rigide') document.getElementById('b-epaisseur').value = b.epaisseur || '';
+  document.getElementById('b-finition').value  = b.finition || '';
+  document.getElementById('b-commentaire').value = b.commentaire || '';
+  if (b.visuel) { const img = document.getElementById('b-preview'); img.src = b.visuel; img.style.display = 'block'; }
+  document.getElementById('bpi-modal-title').textContent = 'Modifier le BPI';
+  document.getElementById('btn-save-bpi').textContent = 'Enregistrer les modifications';
+  openModal('overlay-bpi');
+}
+
+function resetBPIForm() {
+  ['b-client','b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('b-exemplaires').value = '1';
   document.getElementById('b-type').value = '';
   document.getElementById('b-matiere').innerHTML = '<option value="">Choisir le type d\'abord</option>';
+  document.getElementById('ff-epaisseur').style.display = 'none';
   document.getElementById('b-visuel').value = '';
-  document.getElementById('b-preview').style.display = 'none';
-  if (d) {
-    document.getElementById('b-client').value = d.client;
-    document.getElementById('b-commande').value = d.commande || '';
-  }
-  openModal('modal-bpi');
+  const img = document.getElementById('b-preview'); img.src = ''; img.style.display = 'none';
 }
 
-function updateMatieres() {
+function onTypeChange() {
   const type = document.getElementById('b-type').value;
-  const sel = document.getElementById('b-matiere');
-  sel.innerHTML = '';
-  const opts = type === 'souple'
-    ? ['Adhésif', 'Bâche', 'Dépoli']
-    : type === 'rigide'
-    ? ['PVC', 'Dibond', 'Plexiglas', 'Bois']
-    : [];
-  if (!opts.length) {
-    sel.innerHTML = '<option value="">Choisir le type d\'abord</option>';
-    return;
-  }
-  sel.innerHTML = '<option value="">Choisir…</option>' + opts.map(o => `<option value="${o}">${o}</option>`).join('');
+  const sel  = document.getElementById('b-matiere');
+  const opts = type === 'souple' ? ['Adhésif','Bâche','Dépoli'] : type === 'rigide' ? ['PVC','Dibond','Plexiglas','Bois'] : [];
+  sel.innerHTML = opts.length ? '<option value="">Choisir…</option>' + opts.map(o => `<option>${o}</option>`).join('') : '<option value="">Choisir le type d\'abord</option>';
+  document.getElementById('ff-epaisseur').style.display = type === 'rigide' ? '' : 'none';
+  if (type !== 'rigide') document.getElementById('b-epaisseur').value = '';
 }
 
-function previewImage(input) {
-  const file = input.files[0];
-  if (!file) return;
+function previewImg(input) {
+  const f = input.files[0]; if (!f) return;
+  /* Redimensionne l'image avant stockage (max 800px, limite Firestore) */
   const reader = new FileReader();
   reader.onload = e => {
-    const img = document.getElementById('b-preview');
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width  = img.width  * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const prev = document.getElementById('b-preview');
+      prev.src = canvas.toDataURL('image/jpeg', 0.8);
+      prev.style.display = 'block';
+    };
     img.src = e.target.result;
-    img.style.display = 'block';
   };
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(f);
 }
 
 function saveBPI() {
-  const client = document.getElementById('b-client').value.trim();
-  const commande = document.getElementById('b-commande').value.trim();
-  const formatL = document.getElementById('b-format-l').value.trim();
-  const formatH = document.getElementById('b-format-h').value.trim();
-  const type = document.getElementById('b-type').value;
-  const matiere = document.getElementById('b-matiere').value;
-  const epaisseur = document.getElementById('b-epaisseur').value.trim();
-  const exemplaires = parseInt(document.getElementById('b-exemplaires').value) || 1;
-  const previewSrc = document.getElementById('b-preview').src;
-  const visuel = document.getElementById('b-preview').style.display !== 'none' && previewSrc ? previewSrc : null;
+  const client   = document.getElementById('b-client').value.trim();
+  const fL       = document.getElementById('b-format-l').value.trim();
+  const fH       = document.getElementById('b-format-h').value.trim();
+  const type     = document.getElementById('b-type').value;
+  const matiere  = document.getElementById('b-matiere').value;
+  const epaisseur= document.getElementById('b-epaisseur').value.trim();
+  const finition = document.getElementById('b-finition').value.trim();
+  const comment  = document.getElementById('b-commentaire').value.trim();
+  const qte      = parseInt(document.getElementById('b-exemplaires').value) || 1;
+  const prevEl   = document.getElementById('b-preview');
+  const visuel   = (prevEl.style.display !== 'none' && prevEl.src && !prevEl.src.endsWith('dashboard.html')) ? prevEl.src : null;
 
-  if (!client || !type || !matiere) {
-    showToast('Veuillez remplir les champs obligatoires');
-    return;
-  }
+  if (!client || !type || !matiere) { showToast('Remplir les champs obligatoires.'); return; }
+  if (!fL || !fH || isNaN(parseFloat(fL)) || isNaN(parseFloat(fH))) { showToast('Saisir une largeur et hauteur valides (cm).'); return; }
 
-  const d = demandes.find(x => x.id === currentBpiDemandeId);
+  const d = CACHE.find(x => x.id === _bpiDemandeId);
   if (!d) return;
 
-  d.bpis.push({ id: 'bpi_' + Date.now(), client, commande, formatL, formatH, type, matiere, epaisseur, exemplaires, visuel });
-  saveData(demandes);
-  closeModal('modal-bpi');
-  renderList();
-  showToast('BPI ajouté avec succès !');
-  // Re-open card
-  setTimeout(() => {
-    const body = document.getElementById('body-' + currentBpiDemandeId);
-    const chev = document.getElementById('chev-' + currentBpiDemandeId);
-    if (body) { body.classList.add('open'); chev.classList.add('open'); }
-  }, 20);
+  const bpis = [...(d.bpis || [])];
+  const payload = {
+    id: _bpiEditId || ('bpi_' + Date.now()),
+    client, commande: d.commande,
+    formatL: parseFloat(fL) + ' cm', formatH: parseFloat(fH) + ' cm',
+    type, matiere, epaisseur: type === 'rigide' ? epaisseur : '',
+    finition, commentaire: comment, exemplaires: qte, visuel
+  };
+
+  if (_bpiEditId) {
+    const idx = bpis.findIndex(x => x.id === _bpiEditId);
+    if (idx !== -1) bpis[idx] = payload;
+  } else {
+    bpis.push(payload);
+  }
+
+  const btn = document.getElementById('btn-save-bpi');
+  btn.disabled = true;
+  COL.doc(_bpiDemandeId).update({ bpis })
+    .then(() => {
+      showToast(_bpiEditId ? 'BPI modifié !' : 'BPI ajouté !');
+      closeModal('overlay-bpi');
+      btn.disabled = false;
+    })
+    .catch(e => { showToast('Erreur : ' + e.message); btn.disabled = false; });
 }
 
-// ─── FILTER BY STATUS (sidebar) ───────────────────────
+/* ══════════════════════════════
+   FILTRES SIDEBAR
+══════════════════════════════ */
 function filterByStatus(status) {
   document.getElementById('filter-status').value = status;
+  if (status === '') resetAllFilters();
+  setActiveNav(status === '' ? 'nav-all' : 'nav-' + status);
   renderList();
 }
 
-// ─── MODAL HELPERS ────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('show'); }
+function resetAllFilters() {
+  document.getElementById('filter-status').value    = '';
+  document.getElementById('filter-expedition').value = '';
+  document.getElementById('search-input').value      = '';
+  setActiveNav('nav-all');
+}
+
+function setActiveNav(activeId) {
+  ['nav-all','nav-brouillon','nav-en_cours','nav-produit','nav-expedie'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', id === activeId);
+  });
+}
+
+/* ══════════════════════════════
+   UTILITAIRES
+══════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-document.querySelectorAll('.modal-overlay').forEach(el => {
+document.querySelectorAll('.overlay').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
 });
 
-// ─── TOAST ────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// ─── ESCAPE HTML ──────────────────────────────────────
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ─── INIT ─────────────────────────────────────────────
-renderList();
+/* ══════════════════════════════
+   DÉMARRAGE
+══════════════════════════════ */
+startListener();
 </script>
 </body>
 </html>
