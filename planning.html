@@ -34,7 +34,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       Tout afficher
     </div>
-    <div class="nav-item" id="f-brouillon" onclick="toggleFilter('brouillon')"><span class="dot dot-brouillon"></span>Brouillon</div>
     <div class="nav-item" id="f-en_cours"  onclick="toggleFilter('en_cours')"><span class="dot dot-en_cours"></span>En cours</div>
     <div class="nav-item" id="f-produit"   onclick="toggleFilter('produit')"><span class="dot dot-produit"></span>Produit</div>
     <div class="nav-item" id="f-expedie"   onclick="toggleFilter('expedie')"><span class="dot dot-expedie"></span>Expédié</div>
@@ -69,7 +68,6 @@
   </div>
 
   <div class="legend-bar">
-    <div class="legend-item"><div class="legend-dot ld-brouillon"></div>Brouillon</div>
     <div class="legend-item"><div class="legend-dot ld-en_cours"></div>En cours</div>
     <div class="legend-item"><div class="legend-dot ld-produit"></div>Produit</div>
     <div class="legend-item"><div class="legend-dot ld-expedie"></div>Expédié</div>
@@ -185,7 +183,7 @@ function goToday()  { currentMonday=getMonday(new Date()); render(); }
 /* ── Filtre ── */
 function toggleFilter(f) {
   activeFilter = f;
-  ['all','brouillon','en_cours','produit','expedie'].forEach(id => {
+  ['all','en_cours','produit','expedie'].forEach(id => {
     const el = document.getElementById('f-'+id);
     if (el) el.classList.toggle('active', id===f);
   });
@@ -223,7 +221,7 @@ function render() {
     if (byDay[key]!==undefined) byDay[key].push(d);
   });
 
-  const rows = activeFilter==='all' ? ['brouillon','en_cours','produit','expedie'] : [activeFilter];
+  const rows = activeFilter==='all' ? ['en_cours','produit','expedie'] : activeFilter==='brouillon' ? [] : [activeFilter];
 
   let html = `<div class="cal-grid">`;
 
