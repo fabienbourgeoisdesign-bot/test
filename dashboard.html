@@ -1066,13 +1066,11 @@ function printBPI(demandeId, bpiId) {
 
   <!-- Bandeau top -->
   <div class="topbar">
-    <div class="logo">Print<em>Flow</em></div>
     <div class="top-center">
-      ${d.commande} · Livraison : ${livraison}<br>
-      Expédition : ${expedition} · Imprimé le ${dateImpression}
+      Expédition : ${expedition} · Imprimé le ${dateImpression} · ${d.bpis.length} BPI au total
     </div>
     <div class="top-bpi">
-      BPI #${String(bpiIndex).padStart(2,'0')}
+      BPI #${String(bpiIndex).padStart(2,'0')} / ${d.bpis.length}
       <small>${d.statut === 'en_cours' ? 'EN COURS' : 'PRODUIT'}</small>
     </div>
   </div>
@@ -1091,6 +1089,7 @@ function printBPI(demandeId, bpiId) {
       <div class="field-block">
         <span class="field-lbl">N° Commande</span>
         <span class="field-val f-lg f-mono f-acc">${d.commande}</span>
+        <span class="field-val f-md" style="margin-top:4px;font-weight:700;letter-spacing:0;">Livraison : ${livraison}</span>
       </div>
 
       <div class="field-block">
@@ -1114,7 +1113,7 @@ function printBPI(demandeId, bpiId) {
           ${b.modeles ? `
           <div>
             <span class="field-lbl">Modèles</span>
-            <span class="field-val f-xl">${b.modeles} <span style="font-size:14px;font-weight:600;color:#666;">mod.</span></span>
+            <span class="field-val f-xl">${b.modeles}</span>
           </div>` : ''}
           <div>
             <span class="field-lbl">Exemplaires</span>
