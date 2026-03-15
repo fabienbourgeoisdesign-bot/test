@@ -53,6 +53,18 @@
         <div class="fb-dot" id="fb-dot"></div>
         <span id="fb-label">Firebase…</span>
       </div>
+      <!-- Cloche de notifications -->
+      <button class="btn-notif" id="btn-notif" onclick="toggleNotifs()" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+      </button>
+      <div class="notif-panel" id="notif-panel" style="display:none;">
+        <div class="notif-header">
+          <span>Notifications</span>
+          <button onclick="clearNotifs()">Tout effacer</button>
+        </div>
+        <div class="notif-list" id="notif-list"><div class="notif-empty">Aucune notification</div></div>
+      </div>
       <button class="btn-primary" onclick="openNewDemande()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
         Nouvelle demande
@@ -101,6 +113,21 @@
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <button class="lightbox-prev" id="lb-prev" onclick="event.stopPropagation();lbNav(-1)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <img class="lightbox-img" id="lightbox-img" alt=""/>
+  <button class="lightbox-next" id="lb-next" onclick="event.stopPropagation();lbNav(1)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="lightbox-counter" id="lb-counter"></div>
+</div>
 
 <!-- ══ NAVIGATION MOBILE ══ -->
 <nav class="mobile-nav">
@@ -209,8 +236,11 @@
     <div class="modal-body">
       <div class="fg">
         <div class="ff">
-          <label>Nom du client <em>*</em></label>
-          <input type="text" class="fi" id="b-client" placeholder="Ex : Mairie de Lyon"/>
+          <label>Nom du client</label>
+          <div class="fi-ro" id="b-client-ro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="b-client-display">—</span>
+          </div>
         </div>
         <div class="ff">
           <label>N° de commande</label>
@@ -330,7 +360,9 @@ let CACHE = [];
 /* ── Listener temps réel ── */
 COL.orderBy('createdAt', 'desc').onSnapshot(
   snap => {
-    CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const newCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    checkNotifs(newCache);
+    CACHE = newCache;
     setFbStatus(true, 'Connecté');
     renderList();
   },
@@ -349,6 +381,8 @@ COL.orderBy('createdAt', 'desc').onSnapshot(
 /* ── Constantes ── */
 const STATUTS     = { brouillon:'Brouillon', en_cours:'En cours', produit:'Produit', expedie:'Expédié' };
 const EXPEDITIONS = { a_emporter:'À emporter', a_livrer:'À livrer', tnt:'TNT' };
+const PAGE_SIZE   = 50;
+let   currentPage = 1;
 
 /* ══ RENDU ══ */
 function renderList() {
@@ -363,10 +397,16 @@ function renderList() {
     return ok_q && ok_st && ok_exp;
   });
 
-  document.getElementById('count-lbl').textContent = `${list.length} demande(s)`;
+  const total     = list.length;
+  const totalPages= Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start     = (currentPage - 1) * PAGE_SIZE;
+  const paginated = list.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('count-lbl').textContent = `${total} demande(s)`;
 
   const container = document.getElementById('requests-list');
-  if (list.length === 0) {
+  if (total === 0) {
     container.innerHTML = `
       <div class="empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
@@ -375,7 +415,36 @@ function renderList() {
       </div>`;
     return;
   }
-  container.innerHTML = list.map(d => cardHTML(d)).join('');
+
+  let html = paginated.map(d => cardHTML(d)).join('');
+
+  /* Pagination */
+  if (totalPages > 1) {
+    html += `<div class="pagination">`;
+    html += `<button class="page-btn" ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>`;
+    for (let i = 1; i <= totalPages; i++) {
+      if (i===1 || i===totalPages || Math.abs(i-currentPage)<=2) {
+        html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+      } else if (Math.abs(i-currentPage)===3) {
+        html += `<span class="page-ellipsis">…</span>`;
+      }
+    }
+    html += `<button class="page-btn" ${currentPage===totalPages?'disabled':''} onclick="goPage(${currentPage+1})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>`;
+    html += `<span class="page-info">${start+1}–${Math.min(start+PAGE_SIZE,total)} sur ${total}</span>`;
+    html += `</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function goPage(n) {
+  currentPage = n;
+  renderList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function cardHTML(d) {
@@ -484,8 +553,9 @@ function bpiHTML(b, i, demandeId, isBrouillon) {
   ${(() => {
     const imgs = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
     if (!imgs.length) return '';
+    const imgsJson = JSON.stringify(imgs).replace(/'/g, "\\'");
     return `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">` +
-      imgs.map(src => `<div class="bpi-preview" style="width:70px;height:70px;flex-shrink:0;"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" alt=""/></div>`).join('') +
+      imgs.map((src, i) => `<div class="bpi-preview" style="width:70px;height:70px;flex-shrink:0;cursor:zoom-in;" onclick="openLightbox(${imgsJson},${i})"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" alt=""/></div>`).join('') +
       `</div>`;
   })()}
 </div>`;
@@ -622,7 +692,10 @@ function openAddBPI(demandeId) {
   _bpiDemandeId = demandeId; _bpiEditId = null;
   resetBPIForm();
   const d = CACHE.find(x => x.id === demandeId);
-  if (d) { document.getElementById('b-client').value = d.client; document.getElementById('b-commande-display').textContent = d.commande||'—'; }
+  if (d) {
+    document.getElementById('b-client-display').textContent = d.client;
+    document.getElementById('b-commande-display').textContent = d.commande||'—';
+  }
   document.getElementById('bpi-modal-title').textContent = 'Ajouter un BPI';
   document.getElementById('btn-save-bpi').textContent = 'Ajouter le BPI';
   openModal('overlay-bpi');
@@ -635,7 +708,7 @@ function openEditBPI(demandeId, bpiId) {
   if (!b) return;
   _bpiDemandeId = demandeId; _bpiEditId = bpiId;
   resetBPIForm();
-  document.getElementById('b-client').value     = b.client||'';
+  document.getElementById('b-client-display').textContent  = b.client||d.client||'';
   document.getElementById('b-commande-display').textContent = d.commande||'—';
   document.getElementById('b-format-l').value   = parseFloat(b.formatL)||'';
   document.getElementById('b-format-h').value   = parseFloat(b.formatH)||'';
@@ -656,7 +729,7 @@ function openEditBPI(demandeId, bpiId) {
 }
 
 function resetBPIForm() {
-  ['b-client','b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire','b-modeles'].forEach(id => { document.getElementById(id).value=''; });
+  ['b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire','b-modeles'].forEach(id => { document.getElementById(id).value=''; });
   document.getElementById('b-exemplaires').value = '1';
   document.getElementById('b-type').value = '';
   document.getElementById('b-matiere').innerHTML = '<option value="">Choisir le type d\'abord</option>';
@@ -716,7 +789,9 @@ function removeVisuel(i) {
 }
 
 function saveBPI() {
-  const client   = document.getElementById('b-client').value.trim();
+  const d = CACHE.find(x => x.id === _bpiDemandeId);
+  if (!d) return;
+  const client   = d.client; // toujours celui de la demande, non modifiable
   const fL       = document.getElementById('b-format-l').value.trim();
   const fH       = document.getElementById('b-format-h').value.trim();
   const type     = document.getElementById('b-type').value;
@@ -730,8 +805,6 @@ function saveBPI() {
   if (!client||!type||!matiere) { showToast('Remplir les champs obligatoires.'); return; }
   if (!fL||!fH||isNaN(parseFloat(fL))||isNaN(parseFloat(fH))) { showToast('Saisir largeur et hauteur valides (cm).'); return; }
 
-  const d = CACHE.find(x => x.id === _bpiDemandeId);
-  if (!d) return;
   const bpis = [...(d.bpis||[])];
   const payload = {
     id: _bpiEditId||('bpi_'+Date.now()),
@@ -782,9 +855,7 @@ function setActiveNav(activeId) {
 function openModal(id)  { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-document.querySelectorAll('.overlay').forEach(el => {
-  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('show'); });
-});
+/* Pas de fermeture au clic extérieur — données préservées */
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -796,6 +867,163 @@ function esc(s) {
   if(!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+/* ══════════════════════════════
+   LIGHTBOX
+══════════════════════════════ */
+let _lbImgs  = [];
+let _lbIndex = 0;
+
+function openLightbox(imgs, index) {
+  _lbImgs  = imgs;
+  _lbIndex = index;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('show');
+  document.addEventListener('keydown', lbKey);
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+  document.removeEventListener('keydown', lbKey);
+}
+
+function lbNav(dir) {
+  _lbIndex = (_lbIndex + dir + _lbImgs.length) % _lbImgs.length;
+  updateLightbox();
+}
+
+function lbKey(e) {
+  if (e.key==='Escape')      closeLightbox();
+  if (e.key==='ArrowLeft')   lbNav(-1);
+  if (e.key==='ArrowRight')  lbNav(1);
+}
+
+function updateLightbox() {
+  document.getElementById('lightbox-img').src = _lbImgs[_lbIndex];
+  document.getElementById('lb-counter').textContent = _lbImgs.length > 1 ? `${_lbIndex+1} / ${_lbImgs.length}` : '';
+  document.getElementById('lb-prev').style.display = _lbImgs.length > 1 ? '' : 'none';
+  document.getElementById('lb-next').style.display = _lbImgs.length > 1 ? '' : 'none';
+}
+
+/* ══════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════ */
+const NOTIF_KEY = 'pf_notifs_' + (ME.email||'guest');
+let NOTIFS = JSON.parse(localStorage.getItem(NOTIF_KEY)||'[]');
+
+/* Snapshot précédent pour détecter les changements */
+let _prevCache = {};
+
+function checkNotifs(newCache) {
+  const now = new Date().toISOString();
+  newCache.forEach(d => {
+    const prev = _prevCache[d.id];
+    if (!prev) return; // première charge — pas de notif
+
+    /* Nouveau statut "En cours" */
+    if (prev.statut !== 'en_cours' && d.statut === 'en_cours') {
+      addNotif({
+        id:   'n_' + Date.now() + Math.random(),
+        type: 'status',
+        icon: '🔄',
+        text: `${d.commande} passée En cours`,
+        sub:  d.client,
+        time: now,
+        read: false
+      });
+    }
+
+    /* Nouveau message */
+    const prevMsgs = (prev.messages||[]).length;
+    const newMsgs  = (d.messages||[]).length;
+    if (newMsgs > prevMsgs) {
+      const lastMsg = d.messages[d.messages.length - 1];
+      if (lastMsg && lastMsg.email !== ME.email) { // pas ses propres messages
+        addNotif({
+          id:   'n_' + Date.now() + Math.random(),
+          type: 'message',
+          icon: '💬',
+          text: `Nouveau message sur ${d.commande}`,
+          sub:  lastMsg.author + ' : ' + lastMsg.text.slice(0,40) + (lastMsg.text.length>40?'…':''),
+          time: now,
+          read: false
+        });
+      }
+    }
+  });
+
+  /* Mettre à jour le cache précédent */
+  newCache.forEach(d => { _prevCache[d.id] = { statut: d.statut, messages: d.messages||[] }; });
+}
+
+function addNotif(n) {
+  NOTIFS.unshift(n);
+  if (NOTIFS.length > 50) NOTIFS = NOTIFS.slice(0, 50);
+  localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFS));
+  renderNotifBadge();
+  renderNotifList();
+}
+
+function renderNotifBadge() {
+  const unread = NOTIFS.filter(n => !n.read).length;
+  const badge  = document.getElementById('notif-badge');
+  const btn    = document.getElementById('btn-notif');
+  badge.textContent = unread > 9 ? '9+' : String(unread);
+  badge.style.display = unread > 0 ? '' : 'none';
+  btn.classList.toggle('has-notif', unread > 0);
+}
+
+function renderNotifList() {
+  const list = document.getElementById('notif-list');
+  if (!NOTIFS.length) {
+    list.innerHTML = '<div class="notif-empty">Aucune notification</div>';
+    return;
+  }
+  list.innerHTML = NOTIFS.map(n => {
+    const time = new Date(n.time).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    return `<div class="notif-item ${n.read?'read':'unread'}">
+      <span class="notif-icon">${n.icon}</span>
+      <div class="notif-content">
+        <div class="notif-text">${esc(n.text)}</div>
+        <div class="notif-sub">${esc(n.sub)}</div>
+        <div class="notif-time">${time}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleNotifs() {
+  const panel = document.getElementById('notif-panel');
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? '' : 'none';
+  if (open) {
+    /* Marquer comme lues */
+    NOTIFS.forEach(n => n.read = true);
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFS));
+    renderNotifBadge();
+    renderNotifList();
+  }
+}
+
+function clearNotifs() {
+  NOTIFS = [];
+  localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFS));
+  renderNotifBadge();
+  renderNotifList();
+}
+
+/* Fermer le panel si clic hors */
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  const btn   = document.getElementById('btn-notif');
+  if (!panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
+
+/* Init badges */
+renderNotifBadge();
+renderNotifList();
 </script>
 </body>
 </html>
