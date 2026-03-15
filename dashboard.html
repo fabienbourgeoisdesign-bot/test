@@ -302,9 +302,10 @@
         </div>
         <div class="ff full">
           <label>Visuels (optionnel — plusieurs fichiers possibles)</label>
-          <label class="upload-zone" id="upload-zone-label">
+          <label class="upload-btn">
             <input type="file" id="b-visuels" accept="image/*" multiple onchange="previewImgs(this)"/>
-            <div class="upload-txt">📁 Cliquer pour ajouter des visuels (JPG, PNG… sélection multiple possible)</div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Ajouter des visuels
           </label>
           <div id="b-previews" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
         </div>
@@ -553,9 +554,16 @@ function bpiHTML(b, i, demandeId, isBrouillon) {
   ${(() => {
     const imgs = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
     if (!imgs.length) return '';
-    const imgsJson = JSON.stringify(imgs).replace(/'/g, "\\'");
+    /* Stocker les images dans le registre global pour éviter les problèmes de quotes */
+    const regKey = '_lb_' + b.id.replace(/[^a-z0-9]/gi,'_');
+    window[regKey] = imgs;
     return `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">` +
-      imgs.map((src, i) => `<div class="bpi-preview" style="width:70px;height:70px;flex-shrink:0;cursor:zoom-in;" onclick="openLightbox(${imgsJson},${i})"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" alt=""/></div>`).join('') +
+      imgs.map((src, i) => `
+        <div style="width:70px;height:70px;flex-shrink:0;cursor:zoom-in;border:1px solid var(--border);overflow:hidden;"
+             onclick="openLightbox(window['${regKey}'],${i})"
+             title="Cliquer pour agrandir">
+          <img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Visuel ${i+1}"/>
+        </div>`).join('') +
       `</div>`;
   })()}
 </div>`;
