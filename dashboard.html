@@ -923,13 +923,14 @@ function checkNotifs(newCache) {
     /* Nouveau statut "En cours" */
     if (prev.statut !== 'en_cours' && d.statut === 'en_cours') {
       addNotif({
-        id:   'n_' + Date.now() + Math.random(),
-        type: 'status',
-        icon: '🔄',
-        text: `${d.commande} passée En cours`,
-        sub:  d.client,
-        time: now,
-        read: false
+        id:        'n_' + Date.now() + Math.random(),
+        type:      'status',
+        icon:      '🔄',
+        text:      `${d.commande} passée En cours`,
+        sub:       d.client,
+        time:      now,
+        read:      false,
+        demandeId: d.id
       });
     }
 
@@ -938,15 +939,16 @@ function checkNotifs(newCache) {
     const newMsgs  = (d.messages||[]).length;
     if (newMsgs > prevMsgs) {
       const lastMsg = d.messages[d.messages.length - 1];
-      if (lastMsg && lastMsg.email !== ME.email) { // pas ses propres messages
+      if (lastMsg && lastMsg.email !== ME.email) {
         addNotif({
-          id:   'n_' + Date.now() + Math.random(),
-          type: 'message',
-          icon: '💬',
-          text: `Nouveau message sur ${d.commande}`,
-          sub:  lastMsg.author + ' : ' + lastMsg.text.slice(0,40) + (lastMsg.text.length>40?'…':''),
-          time: now,
-          read: false
+          id:        'n_' + Date.now() + Math.random(),
+          type:      'message',
+          icon:      '💬',
+          text:      `Nouveau message sur ${d.commande}`,
+          sub:       lastMsg.author + ' : ' + lastMsg.text.slice(0,40) + (lastMsg.text.length>40?'…':''),
+          time:      now,
+          read:      false,
+          demandeId: d.id
         });
       }
     }
@@ -981,7 +983,8 @@ function renderNotifList() {
   }
   list.innerHTML = NOTIFS.map(n => {
     const time = new Date(n.time).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-    return `<div class="notif-item ${n.read?'read':'unread'}">
+    const clickable = n.demandeId ? `onclick="openFromNotif('${n.demandeId}')" style="cursor:pointer;"` : '';
+    return `<div class="notif-item ${n.read?'read':'unread'}" ${clickable}>
       <span class="notif-icon">${n.icon}</span>
       <div class="notif-content">
         <div class="notif-text">${esc(n.text)}</div>
@@ -1010,6 +1013,30 @@ function clearNotifs() {
   localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFS));
   renderNotifBadge();
   renderNotifList();
+}
+
+function openFromNotif(demandeId) {
+  /* Fermer le panel */
+  document.getElementById('notif-panel').style.display = 'none';
+  /* Réinitialiser les filtres pour que la carte soit visible */
+  resetAllFilters();
+  /* Attendre le rendu puis ouvrir la carte */
+  setTimeout(() => {
+    const body = document.getElementById('body-' + demandeId);
+    const chev = document.getElementById('chev-' + demandeId);
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      chev.classList.add('open');
+    }
+    /* Scroll jusqu'à la carte */
+    const card = document.getElementById('card-' + demandeId);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    /* Scroll du chat en bas */
+    setTimeout(() => {
+      const chat = document.getElementById('chat-' + demandeId);
+      if (chat) chat.scrollTop = chat.scrollHeight;
+    }, 300);
+  }, 80);
 }
 
 /* Fermer le panel si clic hors */

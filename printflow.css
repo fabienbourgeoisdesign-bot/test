@@ -776,10 +776,10 @@ a { color: inherit; }
   background: transparent;
   border: 1px solid var(--border);
   cursor: pointer;
-  color: var(--muted);
+  color: var(--ink);
   transition: all .14s;
 }
-.btn-notif:hover { border-color: var(--ink); color: var(--ink); }
+.btn-notif:hover { border-color: var(--ink); background: var(--paper); }
 .btn-notif svg   { width: 16px; height: 16px; }
 
 .btn-notif.has-notif { border-color: var(--accent); color: var(--accent); }
@@ -851,6 +851,7 @@ a { color: inherit; }
 .notif-item:last-child { border-bottom: none; }
 .notif-item.unread { background: #fef8f7; }
 .notif-item.read   { background: white; opacity: .7; }
+.notif-item[onclick]:hover { background: #f5f0e8; opacity: 1; }
 
 .notif-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
 .notif-content { flex: 1; min-width: 0; }
