@@ -18,7 +18,7 @@
   --accent:     #e84c2b;
   --blue:       #2b6de8;
   --green:      #1a9e5c;
-  --yellow:     #c8860a;
+  --yellow:     #e84c2b;
   --muted:      #8a867e;
   --border:     #d8d3ca;
   --white:      #ffffff;
@@ -362,7 +362,7 @@ a { color: inherit; }
   white-space: nowrap;
 }
 .pill-brouillon { color: var(--muted);   border-color: #c8c3ba; background: #f4f2ee; }
-.pill-en_cours  { color: var(--yellow);  border-color: #d4920a; background: #fef8ec; }
+.pill-en_cours  { color: var(--yellow);  border-color: var(--yellow);  background: #fde8e4; }
 .pill-produit   { color: var(--blue);    border-color: #2b6de8; background: #edf2fd; }
 .pill-expedie   { color: var(--green);   border-color: #1a9e5c; background: #e8f7f0; }
 
@@ -494,6 +494,22 @@ a { color: inherit; }
 }
 .btn-edit-bpi:hover { border-color: var(--blue); color: var(--blue); background: #edf2fd; }
 .btn-edit-bpi svg { width: 10px; height: 10px; }
+
+.btn-print-bpi {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all .12s;
+}
+.btn-print-bpi:hover { border-color: var(--green); color: var(--green); background: #e8f7f0; }
+.btn-print-bpi svg { width: 10px; height: 10px; }
 
 .bpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font-size: 12px; }
 .bpi-f { display: flex; gap: 5px; }
@@ -959,7 +975,7 @@ a { color: inherit; }
   gap: 8px;
   padding: 10px 18px;
   background: var(--ink);
-  color: white;
+  color: white !important;
   font-family: var(--font-title);
   font-size: 13px;
   font-weight: 600;
@@ -968,7 +984,7 @@ a { color: inherit; }
   transition: background .15s, border-color .15s;
   user-select: none;
 }
-.upload-btn:hover { background: var(--blue); border-color: var(--blue); }
+.upload-btn:hover { background: var(--blue); border-color: var(--blue); color: white !important; }
 .upload-btn input { display: none; }
 
 /* ══ Upload zone ══ */
@@ -1091,7 +1107,7 @@ a { color: inherit; }
 }
 .legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
 .ld-brouillon { background: #e8e5e0; border: 1px solid #b0a898; }
-.ld-en_cours  { background: #fef3d4; border: 1px solid var(--yellow); }
+.ld-en_cours  { background: #fde8e4; border: 1px solid var(--yellow); }
 .ld-produit   { background: #dce8fd; border: 1px solid var(--blue); }
 .ld-expedie   { background: #d4f0e5; border: 1px solid var(--green); }
 
@@ -1180,7 +1196,7 @@ a { color: inherit; }
 .cal-event:last-child { margin-bottom: 0; }
 
 .cal-event.brouillon { background: #f0ede8; border-color: #a09890; color: var(--ink); }
-.cal-event.en_cours  { background: #fef3d4; border-color: var(--yellow); color: #6b4700; }
+.cal-event.en_cours  { background: #fde8e4; border-color: var(--yellow); color: #7a1f10; }
 .cal-event.produit   { background: #dce8fd; border-color: var(--blue); color: #0f2f6e; }
 .cal-event.expedie   { background: #d4f0e5; border-color: var(--green); color: #0a4226; }
 
