@@ -150,6 +150,21 @@ a { color: inherit; }
 }
 .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
 
+.btn-logs {
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #2a2826;
+  color: #7a7470;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: border-color .15s, color .15s;
+}
+.btn-logs:hover { border-color: var(--blue); color: var(--blue); }
+
 /* ══════════════════════════════
    LAYOUT PRINCIPAL
 ══════════════════════════════ */

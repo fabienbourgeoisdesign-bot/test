@@ -39,6 +39,7 @@
   <div class="sidebar-user">
     <div class="user-name"  id="user-name">—</div>
     <div class="user-email" id="user-email">—</div>
+    <button class="btn-logs" onclick="openLogs()">📋 Logs</button>
     <button class="btn-logout" onclick="logout()">← Déconnexion</button>
   </div>
 </aside>
@@ -144,6 +145,35 @@
     Quitter
   </a>
 </nav>
+
+<!-- ══ MODALE LOGS ══ -->
+<div class="overlay" id="overlay-logs">
+  <div class="modal" style="width:620px;">
+    <div class="modal-head">
+      <div class="modal-title">📋 Logs d'activité</div>
+      <button class="modal-close" onclick="closeModal('overlay-logs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <select class="f-select" id="log-filter-user" onchange="renderLogs()" style="flex:1;">
+          <option value="">Tous les utilisateurs</option>
+        </select>
+        <select class="f-select" id="log-filter-type" onchange="renderLogs()">
+          <option value="">Tous les types</option>
+          <option value="creation">Création</option>
+          <option value="statut">Changement de statut</option>
+          <option value="message">Message</option>
+          <option value="bpi">BPI</option>
+          <option value="suppression">Suppression</option>
+        </select>
+        <button class="btn-secondary" onclick="clearLogs()" style="white-space:nowrap;font-size:11px;">Effacer les logs</button>
+      </div>
+      <div id="log-list" style="max-height:420px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ MODALE CONFIRMATION SUPPRESSION ══ -->
 <div class="overlay" id="overlay-confirm">
@@ -344,6 +374,78 @@ const ME = JSON.parse(_raw || '{}');
 document.getElementById('user-name').textContent  = ME.name  || '—';
 document.getElementById('user-email').textContent = ME.email || '—';
 function logout() { sessionStorage.removeItem('pf_user'); location.href = 'index.html'; }
+
+/* ══════════════════════════════
+   LOGS D'ACTIVITÉ
+══════════════════════════════ */
+const LOGS_KEY = 'pf_logs';
+const LOGS_MAX = 200;
+
+function getLogs() {
+  try { return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]'); } catch { return []; }
+}
+
+function addLog(type, text, demandeId) {
+  const logs = getLogs();
+  logs.unshift({
+    id:        'log_' + Date.now(),
+    type,
+    text,
+    user:      ME.name,
+    email:     ME.email,
+    demandeId: demandeId || null,
+    time:      new Date().toISOString()
+  });
+  localStorage.setItem(LOGS_KEY, JSON.stringify(logs.slice(0, LOGS_MAX)));
+}
+
+function openLogs() {
+  const logs = getLogs();
+  /* Remplir le filtre utilisateurs */
+  const users = [...new Set(logs.map(l => l.user))].filter(Boolean);
+  const sel = document.getElementById('log-filter-user');
+  sel.innerHTML = '<option value="">Tous les utilisateurs</option>' +
+    users.map(u => `<option value="${u}">${u}</option>`).join('');
+  renderLogs();
+  openModal('overlay-logs');
+}
+
+function renderLogs() {
+  const fUser = document.getElementById('log-filter-user').value;
+  const fType = document.getElementById('log-filter-type').value;
+  const logs  = getLogs().filter(l => {
+    if (fUser && l.user !== fUser) return false;
+    if (fType && l.type !== fType) return false;
+    return true;
+  });
+
+  const icons = { creation:'✨', statut:'🔄', message:'💬', bpi:'🖨️', suppression:'🗑️' };
+  const container = document.getElementById('log-list');
+
+  if (!logs.length) {
+    container.innerHTML = '<div style="padding:32px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--muted);">Aucun log enregistré</div>';
+    return;
+  }
+
+  container.innerHTML = logs.map(l => {
+    const time = new Date(l.time).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const ini  = (l.user||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);">
+        <div style="width:26px;height:26px;background:var(--ink);color:white;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;flex-shrink:0;margin-top:1px;">${ini}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;color:var(--ink);">${icons[l.type]||'•'} ${esc(l.text)}</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px;">${esc(l.user)} · ${time}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function clearLogs() {
+  if (!confirm('Effacer tous les logs ?')) return;
+  localStorage.removeItem(LOGS_KEY);
+  renderLogs();
+}
 
 /* ── Firebase ── */
 firebase.initializeApp(FIREBASE_CONFIG);
@@ -603,7 +705,10 @@ function toggleCard(id) {
 
 function changeStatus(id, status) {
   COL.doc(id).update({ statut: status })
-    .then(() => showToast('Statut : ' + STATUTS[status]))
+    .then(() => {
+      showToast('Statut : ' + STATUTS[status]);
+      addLog('statut', `${CACHE.find(x=>x.id===id)?.commande||id} → ${STATUTS[status]}`, id);
+    })
     .catch(e => showToast('Erreur : ' + e.message));
   const card = document.getElementById('card-' + id);
   if (card) {
@@ -623,7 +728,9 @@ function sendMsg(id) {
   const d = CACHE.find(x => x.id === id);
   if (!d) return;
   const msgs = [...(d.messages||[]), { id:'m_'+Date.now(), author:ME.name, email:ME.email, text:txt, time:new Date().toISOString() }];
-  COL.doc(id).update({ messages: msgs }).catch(e => showToast('Erreur : ' + e.message));
+  COL.doc(id).update({ messages: msgs })
+    .then(() => addLog('message', `Message sur ${d.commande} : "${txt.slice(0,40)}${txt.length>40?'…':''}"`, id))
+    .catch(e => showToast('Erreur : ' + e.message));
 }
 
 /* ══ DEMANDE ══ */
@@ -670,6 +777,7 @@ function saveDemande() {
       closeModal('overlay-demande');
       resetAllFilters();
       showToast(`Demande ${commande} créée !`);
+      addLog('creation', `Demande ${commande} créée pour ${client}`, ref.id);
       const t = setInterval(() => {
         if (document.getElementById('body-'+ref.id)) {
           clearInterval(t);
@@ -694,7 +802,12 @@ function askDelete(id) {
 }
 function confirmDelete() {
   if (!_deleteId) return;
-  COL.doc(_deleteId).delete().then(() => showToast('Demande supprimée.')).catch(e => showToast('Erreur : '+e.message));
+  COL.doc(_deleteId).delete()
+    .then(() => {
+      showToast('Demande supprimée.');
+      addLog('suppression', `Demande ${CACHE.find(x=>x.id===_deleteId)?.commande||_deleteId} supprimée`);
+    })
+    .catch(e => showToast('Erreur : '+e.message));
   _deleteId = null;
   closeModal('overlay-confirm');
 }
@@ -773,18 +886,22 @@ function previewImgs(input) {
     reader.onload = e => {
       const img = new Image();
       img.onload = () => {
-        const MAX = 800, ratio = Math.min(MAX/img.width, MAX/img.height, 1);
+        /* Aperçu miniature : max 400px, qualité 55%
+           → ~20-50 Ko peu importe la taille source (même 200 Mo) */
+        const MAX = 400;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
         const c = document.createElement('canvas');
-        c.width = img.width*ratio; c.height = img.height*ratio;
-        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-        _visuels.push(c.toDataURL('image/jpeg',.8));
+        c.width  = Math.round(img.width  * ratio);
+        c.height = Math.round(img.height * ratio);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        _visuels.push(c.toDataURL('image/jpeg', 0.55));
         renderPreviews();
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(f);
   });
-  input.value = ''; // reset pour permettre re-upload
+  input.value = '';
 }
 
 function renderPreviews() {
@@ -839,7 +956,11 @@ function saveBPI() {
   const btn = document.getElementById('btn-save-bpi');
   btn.disabled = true;
   COL.doc(_bpiDemandeId).update({ bpis })
-    .then(() => { showToast(_bpiEditId?'BPI modifié !':'BPI ajouté !'); closeModal('overlay-bpi'); btn.disabled=false; _visuels=[]; })
+    .then(() => {
+      showToast(_bpiEditId?'BPI modifié !':'BPI ajouté !');
+      addLog('bpi', `BPI ${_bpiEditId?'modifié':'ajouté'} sur ${d.commande}`, _bpiDemandeId);
+      closeModal('overlay-bpi'); btn.disabled=false; _visuels=[];
+    })
     .catch(e => { showToast('Erreur : '+e.message); btn.disabled=false; });
 }
 
