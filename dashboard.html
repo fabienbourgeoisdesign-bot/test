@@ -327,6 +327,10 @@
           <input type="text" class="fi" id="b-finition" placeholder="Ex : Ourlet, œillets, pelliculage mat…"/>
         </div>
         <div class="ff full">
+          <label>Lien des fichiers</label>
+          <input type="url" class="fi" id="b-lien" placeholder="https://fromsmash.com/… ou autre lien de téléchargement"/>
+        </div>
+        <div class="ff full">
           <label>Commentaire</label>
           <textarea class="ft" id="b-commentaire" placeholder="Remarques, instructions particulières…" rows="3"></textarea>
         </div>
@@ -659,6 +663,11 @@ function bpiHTML(b, i, demandeId, isBrouillon, statut) {
     ${b.finition ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finition :</span><span class="bpi-fv">${esc(b.finition)}</span></div>` : ''}
   </div>
   ${b.commentaire ? `<div class="bpi-comment"><strong>Commentaire</strong>${esc(b.commentaire)}</div>` : ''}
+  ${b.lien ? `<div style="margin-top:8px;padding:6px 10px;border:1px solid var(--border);background:var(--paper);font-size:12px;display:flex;align-items:center;gap:8px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0;color:var(--blue)"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+    <a href="${esc(b.lien)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-family:var(--font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Lien des fichiers</a>
+    <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${esc(b.lien.replace(/^https?:\/\//,'').slice(0,40))}${b.lien.length>47?'…':''}</span>
+  </div>` : ''}
   ${(() => {
     const imgs = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
     if (!imgs.length) return '';
@@ -847,6 +856,7 @@ function openEditBPI(demandeId, bpiId) {
   if (b.type==='rigide') document.getElementById('b-epaisseur').value = b.epaisseur||'';
   document.getElementById('b-finition').value   = b.finition||'';
   document.getElementById('b-commentaire').value = b.commentaire||'';
+  document.getElementById('b-lien').value        = b.lien||'';
   // Charger les visuels existants
   _visuels = Array.isArray(b.visuels) ? [...b.visuels] : (b.visuel ? [b.visuel] : []);
   renderPreviews();
@@ -856,7 +866,7 @@ function openEditBPI(demandeId, bpiId) {
 }
 
 function resetBPIForm() {
-  ['b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire','b-modeles'].forEach(id => { document.getElementById(id).value=''; });
+  ['b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire','b-modeles','b-lien'].forEach(id => { document.getElementById(id).value=''; });
   document.getElementById('b-exemplaires').value = '1';
   document.getElementById('b-type').value = '';
   document.getElementById('b-matiere').innerHTML = '<option value="">Choisir le type d\'abord</option>';
@@ -930,6 +940,7 @@ function saveBPI() {
   const epaisseur= document.getElementById('b-epaisseur').value.trim();
   const finition = document.getElementById('b-finition').value.trim();
   const comment  = document.getElementById('b-commentaire').value.trim();
+  const lien     = document.getElementById('b-lien').value.trim();
   const qte      = parseInt(document.getElementById('b-exemplaires').value)||1;
   const modeles  = parseInt(document.getElementById('b-modeles').value)||null;
 
@@ -943,7 +954,7 @@ function saveBPI() {
     formatL: parseFloat(fL)+' cm', formatH: parseFloat(fH)+' cm',
     type, matiere,
     epaisseur: type==='rigide' && epaisseur ? parseFloat(epaisseur)+' mm' : '',
-    finition, commentaire: comment,
+    finition, commentaire: comment, lien: lien||null,
     exemplaires: qte,
     modeles: modeles || null,
     visuels: _visuels,
