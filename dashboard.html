@@ -26,6 +26,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Planning
     </a>
+    <a class="nav-item" href="clients.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Clients
+    </a>
     <div class="nav-section">Par statut</div>
     <div class="nav-item active" id="nav-all"       onclick="filterByStatus('')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -140,6 +144,10 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
     Planning
   </a>
+  <a class="mobile-nav-item" href="clients.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Clients
+  </a>
   <a class="mobile-nav-item" href="index.html" onclick="logout();return false;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
     Quitter
@@ -216,7 +224,11 @@
       <div class="fg">
         <div class="ff">
           <label>Nom du client <em>*</em></label>
-          <input type="text" class="fi" id="d-client" placeholder="Ex : Mairie de Lyon"/>
+          <div style="position:relative;">
+            <input type="text" class="fi" id="d-client" placeholder="Tapez pour rechercher ou créer…"
+              autocomplete="off" oninput="onClientInput()" onblur="setTimeout(hideClientSuggestions,150)"/>
+            <div id="client-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1.5px solid var(--ink);border-top:none;z-index:100;max-height:180px;overflow-y:auto;"></div>
+          </div>
         </div>
         <div class="ff">
           <label>N° commande</label>
@@ -457,8 +469,15 @@ function clearLogs() {
 
 /* ── Firebase ── */
 firebase.initializeApp(FIREBASE_CONFIG);
-const DB  = firebase.firestore();
-const COL = DB.collection('demandes');
+const DB   = firebase.firestore();
+const COL  = DB.collection('demandes');
+const CCOL = DB.collection('clients');
+
+/* Cache clients */
+let CLIENTS_CACHE = [];
+CCOL.orderBy('nom').onSnapshot(snap => {
+  CLIENTS_CACHE = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}, () => {});
 
 function setFbStatus(ok, label) {
   document.getElementById('fb-dot').className    = 'fb-dot ' + (ok ? 'ok' : 'error');
@@ -746,7 +765,60 @@ function sendMsg(id) {
     .catch(e => showToast('Erreur : ' + e.message));
 }
 
-/* ══ DEMANDE ══ */
+/* ══════════════════════════════
+   AUTOCOMPLÉTION CLIENTS
+══════════════════════════════ */
+function onClientInput() {
+  const q   = document.getElementById('d-client').value.trim().toLowerCase();
+  const box = document.getElementById('client-suggestions');
+  if (q.length < 1) { box.style.display = 'none'; return; }
+
+  const matches = CLIENTS_CACHE.filter(c => c.nom.toLowerCase().includes(q)).slice(0, 8);
+  const exactMatch = CLIENTS_CACHE.some(c => c.nom.toLowerCase() === q);
+
+  let html = matches.map(c => `
+    <div onclick="selectClient('${esc(c.nom)}')"
+         style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;"
+         onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='white'">
+      <span>${esc(c.nom)}</span>
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);">${countClientDemandes(c.nom)} commande(s)</span>
+    </div>`).join('');
+
+  if (!exactMatch && q.length > 1) {
+    html += `
+      <div onclick="selectClient('${esc(document.getElementById('d-client').value.trim())}')"
+           style="padding:9px 12px;cursor:pointer;font-size:13px;color:var(--blue);display:flex;align-items:center;gap:8px;background:#edf2fd;"
+           onmouseover="this.style.background='#dce8fd'" onmouseout="this.style.background='#edf2fd'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0;"><path d="M12 5v14M5 12h14"/></svg>
+        Créer "${esc(document.getElementById('d-client').value.trim())}"
+      </div>`;
+  }
+
+  box.innerHTML = html || `<div style="padding:9px 12px;font-size:12px;color:var(--muted);">Aucun client trouvé</div>`;
+  box.style.display = 'block';
+}
+
+function selectClient(nom) {
+  document.getElementById('d-client').value = nom;
+  hideClientSuggestions();
+}
+
+function hideClientSuggestions() {
+  document.getElementById('client-suggestions').style.display = 'none';
+}
+
+function countClientDemandes(nom) {
+  return CACHE.filter(d => d.client === nom).length;
+}
+
+function ensureClientExists(nom) {
+  if (!nom) return;
+  const exists = CLIENTS_CACHE.some(c => c.nom.toLowerCase() === nom.toLowerCase());
+  if (!exists) {
+    CCOL.add({ nom, createdAt: new Date().toISOString(), createdBy: ME.name, email:'', telephone:'', adresse:'' })
+      .catch(() => {});
+  }
+}
 function openNewDemande() {
   ['d-client','d-livraison','d-heure-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('d-commande-preview').textContent = genCmdNum();
@@ -788,6 +860,7 @@ function saveDemande() {
 
   COL.add({ client, commande, livraison, heureLivraison: heureLiv, expedition, statut:'brouillon', createur:ME.name, createurEmail:ME.email, createdAt:new Date().toISOString(), bpis:[], messages })
     .then(ref => {
+      ensureClientExists(client);
       closeModal('overlay-demande');
       resetAllFilters();
       showToast(`Demande ${commande} créée !`);

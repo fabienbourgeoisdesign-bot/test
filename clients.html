@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PrintFlow — Clients</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="printflow.css">
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-sq"><svg viewBox="0 0 24 24"><path d="M5 4h14a1 1 0 011 1v3H4V5a1 1 0 011-1zm-1 6h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1V10zm4 3v2h2v-2H8zm4 0v2h2v-2h-2z"/></svg></div>
+    <span class="logo-name">Print<em>Flow</em></span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Navigation</div>
+    <a class="nav-item" href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
+      Demandes
+    </a>
+    <a class="nav-item" href="planning.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Planning
+    </a>
+    <a class="nav-item active" href="clients.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Clients
+    </a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-name"  id="user-name">—</div>
+    <div class="user-email" id="user-email">—</div>
+    <button class="btn-logout" onclick="logout()">← Déconnexion</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">Clients</div>
+    <div class="topbar-right">
+      <div class="fb-status">
+        <div class="fb-dot" id="fb-dot"></div>
+        <span id="fb-label">Firebase…</span>
+      </div>
+      <button class="btn-primary" onclick="openNewClient()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Nouveau client
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <div class="mobile-page-btns">
+      <a class="mobile-page-btn" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg>
+        Demandes
+      </a>
+      <a class="mobile-page-btn" href="planning.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Planning
+      </a>
+      <a class="mobile-page-btn active" href="clients.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Clients
+      </a>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Rechercher un client…" oninput="renderClients()"/>
+    </div>
+    <span class="count-lbl" id="count-lbl">—</span>
+  </div>
+
+  <div class="content">
+    <div id="clients-list">
+      <div class="loading-state"><div class="spinner"></div>Chargement…</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ MODALE CLIENT ══ -->
+<div class="overlay" id="overlay-client">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="client-modal-title">Nouveau client</div>
+      <button class="modal-close" onclick="closeModal('overlay-client')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="ff full">
+          <label>Nom du client <em>*</em></label>
+          <input type="text" class="fi" id="c-nom" placeholder="Ex : Mairie de Lyon"/>
+        </div>
+        <div class="ff">
+          <label>Email</label>
+          <input type="email" class="fi" id="c-email" placeholder="contact@client.fr"/>
+        </div>
+        <div class="ff">
+          <label>Téléphone</label>
+          <input type="tel" class="fi" id="c-tel" placeholder="04 72 10 30 30"/>
+        </div>
+        <div class="ff full">
+          <label>Adresse</label>
+          <input type="text" class="fi" id="c-adresse" placeholder="1 rue de la Paix, 75001 Paris"/>
+        </div>
+        <div class="ff full">
+          <label>Notes</label>
+          <textarea class="ft" id="c-notes" placeholder="Informations complémentaires…" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-client')">Annuler</button>
+      <button class="btn-primary" id="btn-save-client" onclick="saveClient()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALE FICHE CLIENT ══ -->
+<div class="overlay" id="overlay-fiche">
+  <div class="modal" style="width:620px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="fiche-nom">—</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:3px;" id="fiche-meta">—</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-secondary" onclick="editCurrentClient()" style="font-size:12px;">Modifier</button>
+        <button class="modal-close" onclick="closeModal('overlay-fiche')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- Infos contact -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;" id="fiche-infos"></div>
+      <!-- Historique commandes -->
+      <div class="col-title">Historique des commandes</div>
+      <div id="fiche-demandes" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALE CONFIRMATION SUPPRESSION ══ -->
+<div class="overlay" id="overlay-confirm-client">
+  <div class="modal" style="width:420px;">
+    <div class="modal-head">
+      <div class="modal-title">Supprimer ce client ?</div>
+      <button class="modal-close" onclick="closeModal('overlay-confirm-client')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">Supprimer le client <strong id="confirm-client-nom" style="color:var(--ink);"></strong> ?</p>
+      <p style="margin-top:10px;padding:8px 12px;background:#fde8e4;font-family:var(--font-mono);font-size:11px;color:var(--accent);">⚠ Ses demandes ne seront pas supprimées.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-confirm-client')">Annuler</button>
+      <button class="btn-primary" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDeleteClient()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+'use strict';
+
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBCHa03MhQUMFc2xBggzAqvxDitomALiAk",
+  authDomain:        "gestion-de-demandes.firebaseapp.com",
+  projectId:         "gestion-de-demandes",
+  storageBucket:     "gestion-de-demandes.firebasestorage.app",
+  messagingSenderId: "300350796313",
+  appId:             "1:300350796313:web:8054d934e7ff408338b088"
+};
+
+/* ── Auth ── */
+const _raw = sessionStorage.getItem('pf_user');
+if (!_raw) location.href = 'index.html';
+const ME = JSON.parse(_raw || '{}');
+document.getElementById('user-name').textContent  = ME.name  || '—';
+document.getElementById('user-email').textContent = ME.email || '—';
+function logout() { sessionStorage.removeItem('pf_user'); location.href = 'index.html'; }
+
+/* ── Firebase ── */
+firebase.initializeApp(FIREBASE_CONFIG);
+const DB   = firebase.firestore();
+const CCOL = DB.collection('clients');
+const DCOL = DB.collection('demandes');
+
+function setFbStatus(ok, label) {
+  document.getElementById('fb-dot').className    = 'fb-dot '+(ok?'ok':'error');
+  document.getElementById('fb-label').textContent = label;
+}
+
+/* ── Cache ── */
+let CLIENTS  = [];
+let DEMANDES = [];
+
+/* ── Listeners ── */
+CCOL.orderBy('nom').onSnapshot(
+  snap => { CLIENTS = snap.docs.map(d => ({ id: d.id, ...d.data() })); setFbStatus(true,'Connecté'); renderClients(); },
+  err  => { setFbStatus(false,'Erreur Firebase'); console.error(err); }
+);
+
+DCOL.onSnapshot(
+  snap => { DEMANDES = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderClients(); },
+  () => {}
+);
+
+/* ══ RENDU LISTE ══ */
+function renderClients() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const list = CLIENTS.filter(c => !q || c.nom.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q));
+
+  document.getElementById('count-lbl').textContent = `${list.length} client(s)`;
+
+  const container = document.getElementById('clients-list');
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <div class="empty-title">Aucun client</div>
+        <p>Créez votre premier client ou créez une demande.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
+    ${list.map(c => clientCardHTML(c)).join('')}
+  </div>`;
+}
+
+function clientCardHTML(c) {
+  const nbDemandes = DEMANDES.filter(d => d.client === c.nom).length;
+  const lastDemande = DEMANDES.filter(d => d.client === c.nom).sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt))[0];
+  const ini = c.nom.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+  return `
+<div style="background:white;border:1px solid var(--border);padding:16px;cursor:pointer;transition:all .15s;"
+     onclick="openFiche('${c.id}')"
+     onmouseover="this.style.borderColor='var(--ink)';this.style.boxShadow='2px 2px 0 var(--border)'"
+     onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+    <div style="width:38px;height:38px;background:var(--ink);color:white;display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-size:14px;font-weight:700;flex-shrink:0;">${esc(ini)}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-family:var(--font-title);font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(c.nom)}</div>
+      ${c.email ? `<div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(c.email)}</div>` : ''}
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">
+      ${nbDemandes} demande(s)
+    </span>
+    ${lastDemande ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);">dernière : ${new Date(lastDemande.createdAt).toLocaleDateString('fr-FR')}</span>` : ''}
+  </div>
+  ${c.telephone ? `<div style="margin-top:8px;font-size:12px;color:var(--muted);">📞 ${esc(c.telephone)}</div>` : ''}
+</div>`;
+}
+
+/* ══ FICHE CLIENT ══ */
+let _currentClientId = null;
+
+function openFiche(id) {
+  const c = CLIENTS.find(x => x.id === id);
+  if (!c) return;
+  _currentClientId = id;
+
+  document.getElementById('fiche-nom').textContent  = c.nom;
+  document.getElementById('fiche-meta').textContent = `Créé le ${c.createdAt ? new Date(c.createdAt).toLocaleDateString('fr-FR') : '—'} par ${c.createdBy||'—'}`;
+
+  /* Infos contact */
+  const infos = [
+    c.email     ? { lbl:'Email',     val:`<a href="mailto:${esc(c.email)}" style="color:var(--blue);">${esc(c.email)}</a>` } : null,
+    c.telephone ? { lbl:'Téléphone', val:esc(c.telephone) } : null,
+    c.adresse   ? { lbl:'Adresse',   val:esc(c.adresse), full:true } : null,
+    c.notes     ? { lbl:'Notes',     val:esc(c.notes), full:true } : null,
+  ].filter(Boolean);
+
+  document.getElementById('fiche-infos').innerHTML = infos.map(f => `
+    <div style="${f.full?'grid-column:1/-1':''};display:flex;flex-direction:column;gap:3px;">
+      <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);">${f.lbl}</span>
+      <span style="font-size:13px;font-weight:600;">${f.val}</span>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:13px;">Aucune information de contact renseignée.</div>';
+
+  /* Demandes */
+  const demandes = DEMANDES.filter(d => d.client === c.nom).sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+  const STATUTS = { brouillon:'Brouillon', en_cours:'En cours', produit:'Produit', expedie:'Expédié' };
+  document.getElementById('fiche-demandes').innerHTML = demandes.length ? demandes.map(d => {
+    const liv = d.livraison ? new Date(d.livraison+'T00:00:00').toLocaleDateString('fr-FR') : '—';
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <span style="font-family:var(--font-title);font-size:13px;font-weight:700;min-width:90px;">${esc(d.commande||'—')}</span>
+        <span class="pill pill-${d.statut}">${STATUTS[d.statut]||d.statut}</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);flex:1;">Livraison : ${liv}</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);">${(d.bpis||[]).length} BPI</span>
+        <a href="dashboard.html" style="font-family:var(--font-mono);font-size:10px;color:var(--blue);text-decoration:none;">→ Voir</a>
+      </div>`;
+  }).join('') : '<div style="color:var(--muted);font-size:13px;padding:12px 0;">Aucune demande pour ce client.</div>';
+
+  openModal('overlay-fiche');
+}
+
+/* ══ NOUVEAU / MODIFIER CLIENT ══ */
+let _editClientId = null;
+
+function openNewClient() {
+  _editClientId = null;
+  ['c-nom','c-email','c-tel','c-adresse','c-notes'].forEach(id => { document.getElementById(id).value=''; });
+  document.getElementById('client-modal-title').textContent = 'Nouveau client';
+  document.getElementById('btn-save-client').textContent = 'Enregistrer';
+  openModal('overlay-client');
+}
+
+function editCurrentClient() {
+  const c = CLIENTS.find(x => x.id === _currentClientId);
+  if (!c) return;
+  _editClientId = c.id;
+  document.getElementById('c-nom').value     = c.nom||'';
+  document.getElementById('c-email').value   = c.email||'';
+  document.getElementById('c-tel').value     = c.telephone||'';
+  document.getElementById('c-adresse').value = c.adresse||'';
+  document.getElementById('c-notes').value   = c.notes||'';
+  document.getElementById('client-modal-title').textContent = 'Modifier le client';
+  document.getElementById('btn-save-client').textContent = 'Enregistrer les modifications';
+  closeModal('overlay-fiche');
+  openModal('overlay-client');
+}
+
+function saveClient() {
+  const nom     = document.getElementById('c-nom').value.trim();
+  const email   = document.getElementById('c-email').value.trim();
+  const tel     = document.getElementById('c-tel').value.trim();
+  const adresse = document.getElementById('c-adresse').value.trim();
+  const notes   = document.getElementById('c-notes').value.trim();
+
+  if (!nom) { showToast('Le nom du client est obligatoire.'); return; }
+
+  const btn = document.getElementById('btn-save-client');
+  btn.disabled = true;
+
+  const payload = { nom, email, telephone: tel, adresse, notes };
+
+  const op = _editClientId
+    ? CCOL.doc(_editClientId).update(payload)
+    : CCOL.add({ ...payload, createdAt: new Date().toISOString(), createdBy: ME.name });
+
+  op.then(() => {
+    showToast(_editClientId ? 'Client modifié !' : 'Client créé !');
+    closeModal('overlay-client');
+    btn.disabled = false;
+  }).catch(e => { showToast('Erreur : '+e.message); btn.disabled = false; });
+}
+
+/* ══ SUPPRESSION ══ */
+let _deleteClientId = null;
+
+function askDeleteClient(id) {
+  const c = CLIENTS.find(x => x.id === id);
+  if (!c) return;
+  _deleteClientId = id;
+  document.getElementById('confirm-client-nom').textContent = c.nom;
+  closeModal('overlay-fiche');
+  openModal('overlay-confirm-client');
+}
+
+function confirmDeleteClient() {
+  if (!_deleteClientId) return;
+  CCOL.doc(_deleteClientId).delete()
+    .then(() => { showToast('Client supprimé.'); closeModal('overlay-confirm-client'); })
+    .catch(e => showToast('Erreur : '+e.message));
+  _deleteClientId = null;
+}
+
+/* ══ UTILITAIRES ══ */
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function esc(s) {
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
