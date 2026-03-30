@@ -982,9 +982,9 @@ function previewImgs(input) {
         const typedArray = new Uint8Array(e.target.result);
         pdfjsLib.getDocument({ data: typedArray }).promise.then(pdf => {
           pdf.getPage(1).then(page => {
-            /* Taille cible : 400px de large max */
+            /* Taille cible : 800px de large max — aperçu haute qualité */
             const viewport = page.getViewport({ scale: 1 });
-            const scale    = Math.min(400 / viewport.width, 400 / viewport.height, 1);
+            const scale    = Math.min(800 / viewport.width, 800 / viewport.height, 2);
             const scaled   = page.getViewport({ scale });
 
             const canvas   = document.createElement('canvas');
@@ -992,12 +992,12 @@ function previewImgs(input) {
             canvas.height  = scaled.height;
             const ctx      = canvas.getContext('2d');
 
-            /* Fond blanc (PDF fond transparent) */
+            /* Fond blanc */
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             page.render({ canvasContext: ctx, viewport: scaled }).promise.then(() => {
-              _visuels.push({ src: canvas.toDataURL('image/jpeg', 0.70), isPdf: true });
+              _visuels.push({ src: canvas.toDataURL('image/jpeg', 0.85), isPdf: true });
               renderPreviews();
             });
           });
@@ -1247,7 +1247,7 @@ function printBPI(demandeId, bpiId) {
     /* ── Colonne droite (67%) ── */
     .col-right {
       flex: 1;
-      padding: 12px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -1259,14 +1259,14 @@ function printBPI(demandeId, bpiId) {
       letter-spacing: .1em;
       text-transform: uppercase;
       color: #aaa;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       flex-shrink: 0;
     }
 
     .visuels-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 3px;
       flex: 1;
       align-content: flex-start;
       overflow: hidden;
@@ -1276,6 +1276,7 @@ function printBPI(demandeId, bpiId) {
       border: 1px solid #ccc;
       object-fit: contain;
       background: white;
+      display: block;
     }
 
     .no-visuel {
@@ -1360,7 +1361,7 @@ function printBPI(demandeId, bpiId) {
       </div>` : ''}
 
       <div class="field-block">
-        <div style="display:flex;gap:24px;align-items:flex-end;">
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;">
           ${b.modeles ? `
           <div>
             <span class="field-lbl">Modèles</span>
@@ -1398,13 +1399,26 @@ function printBPI(demandeId, bpiId) {
         <div class="visuel-lbl">Visuels (${imgs.length})</div>
         <div class="visuels-grid">
           ${imgs.map(src => {
-            const sz  = imgs.length === 1 ? '100%' : imgs.length <= 2 ? 'calc(50% - 4px)' : imgs.length <= 4 ? 'calc(50% - 4px)' : 'calc(33% - 6px)';
-            const mxH = imgs.length === 1 ? '80%'  : imgs.length <= 2 ? '80%'             : '45%';
+            /* Calcul largeur selon nombre de visuels */
+            const sz = imgs.length === 1
+              ? '100%'
+              : imgs.length === 2
+              ? 'calc(50% - 2px)'
+              : imgs.length <= 4
+              ? 'calc(50% - 2px)'
+              : 'calc(33.33% - 2px)';
+            /* Hauteur max : laisse ~20px pour le texte sous l'image */
+            const rows = imgs.length <= 2 ? 1 : 2;
+            const availH = imgs.length === 1 ? '100%' : `calc(${100/rows}% - ${rows > 1 ? '14px' : '0px'})`;
+
             return `
-              <div style="width:${sz};display:flex;flex-direction:column;align-items:center;gap:4px;">
-                <img class="visuel-img" src="${src}" style="width:100%;max-height:${mxH};object-fit:contain;" alt=""/>
-                <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:#333;text-align:center;line-height:1.3;">
-                  ${b.formatL} × ${b.formatH}${b.epaisseur ? ` · ${b.epaisseur}` : ''}
+              <div style="width:${sz};display:flex;flex-direction:column;align-items:center;gap:2px;overflow:hidden;">
+                <img class="visuel-img"
+                     src="${src}"
+                     style="width:100%;height:${availH};max-height:${availH};object-fit:contain;flex:1;min-height:0;"
+                     alt=""/>
+                <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:#333;text-align:center;line-height:1.2;white-space:nowrap;flex-shrink:0;">
+                  ${b.formatL} × ${b.formatH}${b.epaisseur ? ` · ${b.epaisseur}` : ''} · <strong>${b.exemplaires} ex.</strong>
                 </div>
               </div>`;
           }).join('')}
