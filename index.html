@@ -98,24 +98,42 @@
     appId:             "1:300350796313:web:8054d934e7ff408338b088"
   };
 
+
+  /* ── Utilisateurs : mots de passe hachés SHA-256 (jamais en clair) ── */
   const USERS = [
-    { login: 'admin',       password: 'test', name: 'Administrateur', email: 'admin@atelier.fr'   },
-    { login: 'commercial1', password: 'test', name: 'Sophie Martin',  email: 'sophie@atelier.fr'  },
-    { login: 'commercial2', password: 'test', name: 'Lucas Dupont',   email: 'lucas@atelier.fr'   },
-    { login: 'nicolas',     password: 'test', name: 'Nicolas',        email: 'nicolas@atelier.fr' },
-    { login: 'lionel',      password: 'test', name: 'Lionel',         email: 'lionel@atelier.fr'  },
-    { login: 'gilles',      password: 'test', name: 'Gilles',         email: 'gilles@atelier.fr'  },
+    { login: 'admin',   hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Administrateur', email: 'admin@atelier.fr'   },
+    { login: 'nicolas', hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Nicolas',        email: 'nicolas@atelier.fr' },
+    { login: 'lionel',  hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Lionel',         email: 'lionel@atelier.fr'  },
+    { login: 'gilles',  hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Gilles',         email: 'gilles@atelier.fr'  },
+    { login: 'charles', hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Charles',        email: 'charles@atelier.fr' },
+    { login: 'judith',  hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Judith',         email: 'judith@atelier.fr'  },
+    { login: 'emilie',  hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Emilie',         email: 'emilie@atelier.fr'  },
+    { login: 'delia',   hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Delia',          email: 'delia@atelier.fr'   },
+    { login: 'seb',     hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Seb',            email: 'seb@atelier.fr'     },
+    { login: 'rayan',   hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Rayan',          email: 'rayan@atelier.fr'   },
+    { login: 'tonin',   hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Tonin',          email: 'tonin@atelier.fr'   },
+    { login: 'fabz',    hash: '8ce81a20075cbb265f2ceafd106cf3a7d4f2fb87614689e3dd38395572db696a', name: 'Fabz',           email: 'fabz@atelier.fr'    },
   ];
 
   if (sessionStorage.getItem('pf_user')) location.href = 'dashboard.html';
 
   firebase.initializeApp(FIREBASE_CONFIG);
 
-  function login() {
+  /* Hash SHA-256 via Web Crypto API (natif, pas de dépendance) */
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function login() {
     const u = document.getElementById('u').value.trim();
     const p = document.getElementById('p').value.trim();
-    const found = USERS.find(x => (x.login === u || x.email === u) && x.password === p);
     document.getElementById('err').classList.remove('show');
+    if (!u || !p) { document.getElementById('err').classList.add('show'); return; }
+
+    const h = await sha256(p);
+    const found = USERS.find(x => (x.login === u || x.email === u) && x.hash === h);
+
     if (!found) {
       document.getElementById('err').classList.add('show');
       document.getElementById('p').value = '';
@@ -124,10 +142,12 @@
     }
     document.getElementById('loading').classList.add('show');
     document.getElementById('btn-login').disabled = true;
+    /* Ne pas stocker le hash dans la session */
+    const session = { name: found.name, email: found.email, login: found.login };
     firebase.firestore().collection('_ping').limit(1).get()
       .catch(() => {})
       .finally(() => {
-        sessionStorage.setItem('pf_user', JSON.stringify(found));
+        sessionStorage.setItem('pf_user', JSON.stringify(session));
         location.href = 'dashboard.html';
       });
   }
