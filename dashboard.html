@@ -1023,37 +1023,14 @@ function openEditBPI(demandeId, bpiId) {
   if (!b) return;
   _bpiDemandeId = demandeId; _bpiEditId = bpiId;
   resetBPIForm();
-  document.getElementById('b-client-display').textContent  = b.client||d.client||'';
+  document.getElementById('b-client-display').textContent   = b.client||d.client||'';
   document.getElementById('b-commande-display').textContent = d.commande||'—';
-  document.getElementById('b-format-l').value   = parseFloat(b.formatL)||'';
-  document.getElementById('b-format-h').value   = parseFloat(b.formatH)||'';
-  document.getElementById('b-exemplaires').value = b.exemplaires||1;
-  document.getElementById('b-modeles').value     = b.modeles||'';
-  document.getElementById('b-type').value        = b.type||'';
-  onTypeChange();
-  document.getElementById('b-matiere').value    = b.matiere||'';
-  if (b.type==='rigide') document.getElementById('b-epaisseur').value = b.epaisseur||'';
-  document.getElementById('b-finition').value   = b.finition||'';
-  document.getElementById('b-commentaire').value = b.commentaire||'';
-  document.getElementById('b-lien').value        = b.lien||'';
-  /* Charger les visuels existants (normalisés en strings) */
-  _visuels = (Array.isArray(b.visuels) ? b.visuels : (b.visuel ? [b.visuel] : [])).map(v => typeof v === 'string' ? v : v.src);
-  renderPreviews();
+  prefillBPIForm(b);
   document.getElementById('bpi-modal-title').textContent = 'Modifier le BPI';
   document.getElementById('btn-save-bpi').textContent = 'Enregistrer les modifications';
   openModal('overlay-bpi');
 }
 
-function resetBPIForm() {
-  ['b-format-l','b-format-h','b-epaisseur','b-finition','b-commentaire','b-modeles','b-lien'].forEach(id => { document.getElementById(id).value=''; });
-  document.getElementById('b-exemplaires').value = '1';
-  document.getElementById('b-type').value = '';
-  document.getElementById('b-matiere').innerHTML = '<option value="">Choisir le type d\'abord</option>';
-  document.getElementById('ff-epaisseur').style.display = 'none';
-  document.getElementById('b-visuels').value = '';
-  document.getElementById('b-previews').innerHTML = '';
-  _visuels = [];
-}
 
 /* ══════════════════════════════
    DONNÉES BPI
