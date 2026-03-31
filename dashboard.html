@@ -1174,7 +1174,7 @@ function onMatiereGrandChange() {
 function buildFinitionsGrid(selected=[]) {
   const type    = document.getElementById('b-type-grand').value;
   const matiere = document.getElementById('b-matiere-grand').value;
-  const isBache  = matiere.toLowerCase().includes('bâche');
+  const isBache  = matiere.toLowerCase().includes('bâche') || matiere.toLowerCase().includes('bache');
   const isRigide = type === 'rigide';
 
   /* Règles de disponibilité :
