@@ -1181,26 +1181,22 @@ function buildFinitionsGrid(selected=[]) {
      - Oeillets & Fourreaux → Bâche uniquement
      - Pieds & Pliage à chaud → Rigide uniquement
   */
-  const OEILLETS      = ['Oeillets 4 coins','Oeillets périmètre tous les 50cm','Oeillets haut','Oeillets bas','Oeillets gauche','Oeillets droite'];
-  const FOURREAUX     = ['Fourreau haut','Fourreau bas','Fourreau latéral gauche','Fourreau latéral droit'];
-  const PIEDS         = ['Pied plat','Pied croisé','Pied plié à chaud','Pliage à chaud'];
-  const PLASTIF       = ['Plastification MAT','Plastification Brillante','Plastification Anti dérapante','Plastification Velleda','Plastification Anti TAG'];
-  const CHEVALET      = ['Pose chevalet'];
+  const OEILLETS   = ['Oeillets 4 coins','Oeillets périmètre tous les 50cm','Oeillets haut','Oeillets bas','Oeillets gauche','Oeillets droite'];
+  const FOURREAUX  = ['Fourreau haut','Fourreau bas','Fourreau latéral gauche','Fourreau latéral droit'];
+  const PIEDS      = ['Pied plat','Pied croisé','Pied plié à chaud','Pliage à chaud'];
 
   const grid = document.getElementById('finitions-grid');
   grid.innerHTML = FINITIONS_GF.map(f => {
-    const checked       = selected.includes(f);
-    const isOeillet     = OEILLETS.includes(f);
-    const isFourreau    = FOURREAUX.includes(f);
-    const isPied        = PIEDS.includes(f);
-    const isPlastif     = PLASTIF.includes(f);
-    const isChevalet    = CHEVALET.includes(f);
+    const checked    = selected.includes(f);
+    const isOeillet  = OEILLETS.includes(f);
+    const isFourreau = FOURREAUX.includes(f);
+    const isPied     = PIEDS.includes(f);
 
+    /* Déterminer si disponible */
     let disabled = false;
-    if ((isOeillet || isFourreau) && !isBache)    disabled = true; // Bâche uniquement
-    if (isPied && !isRigide)                       disabled = true; // Rigide uniquement
-    if (isPlastif && isBache)                      disabled = true; // Pas sur Bâche
-    if (isChevalet && !isRigide)                   disabled = true; // Rigide uniquement
+    let reason   = '';
+    if ((isOeillet || isFourreau) && !isBache)  { disabled = true; reason = 'Bâche uniquement'; }
+    if (isPied && !isRigide)                      { disabled = true; reason = 'Rigide uniquement'; }
 
     return disabled ? '' : `
       <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:4px 6px;border-radius:2px;"
