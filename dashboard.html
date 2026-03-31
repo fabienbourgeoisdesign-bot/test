@@ -474,6 +474,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>try { if(typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}</script>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('awn4W0nlK2ELz-RjM');</script>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -864,10 +868,12 @@ function toggleCard(id) {
 }
 
 function changeStatus(id, status) {
+  const d = CACHE.find(x => x.id === id);
   COL.doc(id).update({ statut: status })
     .then(() => {
       showToast('Statut : ' + STATUTS[status]);
-      addLog('statut', `${CACHE.find(x=>x.id===id)?.commande||id} → ${STATUTS[status]}`, id);
+      addLog('statut', `${d?.commande||id} → ${STATUTS[status]}`, id);
+      if (status === 'en_cours' && d) sendBPIEmails(d);
     })
     .catch(e => showToast('Erreur : ' + e.message));
   const card = document.getElementById('card-' + id);
@@ -878,6 +884,47 @@ function changeStatus(id, status) {
     card.querySelectorAll('.s-btn').forEach(b => b.classList.toggle('on', b.textContent === STATUTS[status]));
     card.querySelectorAll('.btn-edit-bpi').forEach(b => { b.style.display = status === 'brouillon' ? '' : 'none'; });
   }
+}
+
+/* ══════════════════════════════
+   ENVOI EMAILS BPI
+══════════════════════════════ */
+const EMAILJS_SERVICE  = 'service_q7tu2ju';
+const EMAILJS_TPL_GRD  = 'template_fkbuwox';
+const EMAILJS_TPL_PET  = 'template_ujwukim';
+
+function sendBPIEmails(d) {
+  const bpis = d.bpis || [];
+  if (!bpis.length) return;
+  const livraison = d.livraison
+    ? new Date(d.livraison + 'T00:00:00').toLocaleDateString('fr-FR') + (d.heureLivraison ? ` à ${d.heureLivraison}` : '')
+    : '—';
+  const expedition = { a_emporter:'À emporter', a_livrer:'À livrer', tnt:'TNT' }[d.expedition] || '—';
+  bpis.forEach((b, i) => {
+    const cat      = b.categorie || (b.type ? 'grand' : 'grand');
+    const template = cat === 'petit' ? EMAILJS_TPL_PET : EMAILJS_TPL_GRD;
+    const params = {
+      commande:     d.commande    || '—',
+      client:       d.client      || '—',
+      livraison,
+      expedition,
+      createur:     d.createur    || '',
+      bpi_num:      String(i + 1).padStart(2, '0'),
+      exemplaires:  String(b.exemplaires || 1),
+      modeles:      b.modeles  ? String(b.modeles) : '—',
+      commentaire:  b.commentaire || '—',
+      lien:         b.lien        || '—',
+      matiere:      b.matiere     || '—',
+      format:       b.formatL && b.formatH ? `${b.formatL} × ${b.formatH}` : '—',
+      decoupe:      b.decoupe     || 'Aucune',
+      finitions:    (b.finitions && b.finitions.length) ? b.finitions.join(', ') : (b.finition || '—'),
+      format_petit: b.formatPetit || '—',
+      impression:   b.impression  || '—',
+    };
+    emailjs.send(EMAILJS_SERVICE, template, params)
+      .then(() => console.log(`Email BPI #${params.bpi_num} (${cat}) envoyé`))
+      .catch(err => { console.error('Erreur EmailJS :', err); showToast(`Erreur envoi email BPI #${params.bpi_num}`); });
+  });
 }
 
 function sendMsg(id) {
