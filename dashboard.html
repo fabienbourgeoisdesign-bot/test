@@ -1198,16 +1198,13 @@ function buildFinitionsGrid(selected=[]) {
     if ((isOeillet || isFourreau) && !isBache)  { disabled = true; reason = 'Bâche uniquement'; }
     if (isPied && !isRigide)                      { disabled = true; reason = 'Rigide uniquement'; }
 
-    return `
-      <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:${disabled?'not-allowed':'pointer'};padding:4px 6px;border-radius:2px;opacity:${disabled?'.35':'1'};"
-             title="${disabled ? reason : ''}"
-             ${!disabled ? `onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''"` : ''}>
+    return disabled ? '' : `
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:4px 6px;border-radius:2px;"
+             onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''">
         <input type="checkbox" name="bpi-finition" value="${f}"
-               ${checked && !disabled ? 'checked' : ''}
-               ${disabled ? 'disabled' : ''}
-               style="width:13px;height:13px;cursor:${disabled?'not-allowed':'pointer'};accent-color:var(--ink);"/>
+               ${checked ? 'checked' : ''}
+               style="width:13px;height:13px;cursor:pointer;accent-color:var(--ink);"/>
         <span>${esc(f)}</span>
-        ${disabled ? `<span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-left:auto;">${reason}</span>` : ''}
       </label>`;
   }).join('');
 }
