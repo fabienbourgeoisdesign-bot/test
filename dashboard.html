@@ -281,6 +281,8 @@
     </div>
     <div class="modal-body">
       <div class="fg">
+
+        <!-- Client + Commande (toujours visibles) -->
         <div class="ff">
           <label>Nom du client</label>
           <div class="fi-ro" id="b-client-ro">
@@ -295,71 +297,145 @@
             <span id="b-commande-display" class="preview-num">—</span>
           </div>
         </div>
-        <div class="ff">
-          <label>Largeur <em>* cm</em></label>
-          <div class="inp-cm">
-            <input type="number" class="fi" id="b-format-l" placeholder="150" min="1" step="0.1"/>
-            <span>cm</span>
+
+        <!-- Choix Grand / Petit format -->
+        <div class="ff full">
+          <label>Catégorie <em>*</em></label>
+          <div style="display:flex;gap:10px;">
+            <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid var(--border);cursor:pointer;transition:all .14s;" id="cat-btn-grand" onclick="setCategorie('grand')">
+              <input type="radio" name="b-categorie" value="grand" id="b-cat-grand" style="display:none;"/>
+              <span style="font-family:var(--font-title);font-size:13px;font-weight:600;">🖨️ Grand Format</span>
+            </label>
+            <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid var(--border);cursor:pointer;transition:all .14s;" id="cat-btn-petit" onclick="setCategorie('petit')">
+              <input type="radio" name="b-categorie" value="petit" id="b-cat-petit" style="display:none;"/>
+              <span style="font-family:var(--font-title);font-size:13px;font-weight:600;">📄 Petit Format</span>
+            </label>
           </div>
         </div>
-        <div class="ff">
-          <label>Hauteur <em>* cm</em></label>
-          <div class="inp-cm">
-            <input type="number" class="fi" id="b-format-h" placeholder="200" min="1" step="0.1"/>
-            <span>cm</span>
+
+      </div>
+
+      <!-- ══ SECTION GRAND FORMAT ══ -->
+      <div id="section-grand" style="display:none;">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 0 8px;border-top:1px solid var(--border);margin-top:12px;">Grand Format</div>
+        <div class="fg">
+          <div class="ff">
+            <label>Largeur <em>* cm</em></label>
+            <div class="inp-cm">
+              <input type="number" class="fi" id="b-format-l" placeholder="150" min="1" step="0.1"/>
+              <span>cm</span>
+            </div>
+          </div>
+          <div class="ff">
+            <label>Hauteur <em>* cm</em></label>
+            <div class="inp-cm">
+              <input type="number" class="fi" id="b-format-h" placeholder="200" min="1" step="0.1"/>
+              <span>cm</span>
+            </div>
+          </div>
+          <div class="ff">
+            <label>Découpe</label>
+            <select class="fs" id="b-decoupe-grand">
+              <option value="">Aucune</option>
+              <option value="Découpe simple">Découpe simple</option>
+              <option value="Découpe à la forme">Découpe à la forme</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Type de matière <em>*</em></label>
+            <select class="fs" id="b-type-grand" onchange="onTypeGrandChange()">
+              <option value="">Choisir…</option>
+              <option value="souple">Souple</option>
+              <option value="rigide">Rigide</option>
+            </select>
+          </div>
+          <div class="ff full" id="ff-matiere-grand">
+            <label>Matière <em>*</em></label>
+            <select class="fs" id="b-matiere-grand">
+              <option value="">Choisir le type d'abord</option>
+            </select>
           </div>
         </div>
-        <div class="ff">
-          <label>Type <em>*</em></label>
-          <select class="fs" id="b-type" onchange="onTypeChange()">
-            <option value="">Choisir…</option>
-            <option value="souple">Souple</option>
-            <option value="rigide">Rigide</option>
-          </select>
-        </div>
-        <div class="ff">
-          <label>Matière <em>*</em></label>
-          <select class="fs" id="b-matiere">
-            <option value="">Choisir le type d'abord</option>
-          </select>
-        </div>
-        <div class="ff" id="ff-epaisseur" style="display:none;">
-          <label>Épaisseur <em>rigide — mm</em></label>
-          <div class="inp-cm">
-            <input type="number" class="fi" id="b-epaisseur" placeholder="3" min="0" step="0.1"/>
-            <span>mm</span>
-          </div>
-        </div>
-        <div class="ff">
-          <label>Nombre d'exemplaires <em>*</em></label>
-          <input type="number" class="fi" id="b-exemplaires" min="1" placeholder="1"/>
-        </div>
-        <div class="ff">
-          <label>Nombre de modèles</label>
-          <input type="number" class="fi" id="b-modeles" min="1" placeholder="1"/>
-        </div>
-        <div class="ff full">
-          <label>Finition</label>
-          <input type="text" class="fi" id="b-finition" placeholder="Ex : Ourlet, œillets, pelliculage mat…"/>
-        </div>
-        <div class="ff full">
-          <label>Lien des fichiers</label>
-          <input type="url" class="fi" id="b-lien" placeholder="https://fromsmash.com/… ou autre lien de téléchargement"/>
-        </div>
-        <div class="ff full">
-          <label>Commentaire</label>
-          <textarea class="ft" id="b-commentaire" placeholder="Remarques, instructions particulières…" rows="3"></textarea>
-        </div>
-        <div class="ff full">
-          <label>Visuels (optionnel — plusieurs fichiers possibles)</label>
-          <label class="upload-btn">
-            <input type="file" id="b-visuels" accept="image/*,.pdf" multiple onchange="previewImgs(this)"/>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Ajouter des visuels
-          </label>
-          <div id="b-previews" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+        <!-- Finitions grand format (multi-select) -->
+        <div class="ff full" style="margin-top:14px;">
+          <label>Finitions (sélection multiple)</label>
+          <div id="finitions-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:220px;overflow-y:auto;border:1px solid var(--border);padding:8px;background:var(--paper);margin-top:6px;"></div>
         </div>
       </div>
+
+      <!-- ══ SECTION PETIT FORMAT ══ -->
+      <div id="section-petit" style="display:none;">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 0 8px;border-top:1px solid var(--border);margin-top:12px;">Petit Format</div>
+        <div class="fg">
+          <div class="ff">
+            <label>Format <em>*</em></label>
+            <select class="fs" id="b-format-petit">
+              <option value="">Choisir…</option>
+              <option>Carte de visite</option>
+              <option>A7</option>
+              <option>10x10cm</option>
+              <option>A6</option>
+              <option>A5</option>
+              <option>A4</option>
+              <option>A3</option>
+              <option>A2</option>
+              <option>A1</option>
+              <option>A0</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Impression <em>*</em></label>
+            <select class="fs" id="b-impression">
+              <option value="">Choisir…</option>
+              <option>Recto seul</option>
+              <option>Recto verso</option>
+              <option>Recto seul (miroir) + blanc total</option>
+              <option>Recto seul (miroir) + blanc sélectif</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Découpe</label>
+            <select class="fs" id="b-decoupe-petit">
+              <option value="">Aucune</option>
+              <option value="Découpe simple">Découpe simple</option>
+              <option value="Découpe à la forme">Découpe à la forme</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CHAMPS COMMUNS ══ -->
+      <div id="section-commun" style="display:none;">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 0 8px;border-top:1px solid var(--border);margin-top:12px;">Quantité &amp; informations</div>
+        <div class="fg">
+          <div class="ff">
+            <label>Nombre de modèles</label>
+            <input type="number" class="fi" id="b-modeles" min="1" placeholder="1"/>
+          </div>
+          <div class="ff">
+            <label>Nombre d'exemplaires <em>*</em></label>
+            <input type="number" class="fi" id="b-exemplaires" min="1" placeholder="1"/>
+          </div>
+          <div class="ff full">
+            <label>Lien des fichiers</label>
+            <input type="url" class="fi" id="b-lien" placeholder="https://fromsmash.com/…"/>
+          </div>
+          <div class="ff full">
+            <label>Commentaire</label>
+            <textarea class="ft" id="b-commentaire" placeholder="Remarques, instructions particulières…" rows="2"></textarea>
+          </div>
+          <div class="ff full">
+            <label>Visuels (optionnel — images ou PDF)</label>
+            <label class="upload-btn">
+              <input type="file" id="b-visuels" accept="image/*,.pdf" multiple onchange="previewImgs(this)"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Ajouter des visuels
+            </label>
+            <div id="b-previews" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="modal-foot">
       <button class="btn-secondary" onclick="closeModal('overlay-bpi')">Annuler</button>
@@ -661,12 +737,47 @@ function cardHTML(d) {
 
 function bpiHTML(b, i, demandeId, isBrouillon, statut) {
   const canPrint = statut === 'en_cours' || statut === 'produit';
+  const cat = b.categorie || (b.type ? 'grand' : 'grand'); // rétrocompat
+
+  /* Badge catégorie */
+  let catBadge = '';
+  if (cat === 'grand') {
+    catBadge = b.type === 'souple' ? '🪁 Grand Format — Souple' : b.type === 'rigide' ? '🔩 Grand Format — Rigide' : '🖨️ Grand Format';
+  } else {
+    catBadge = '📄 Petit Format';
+  }
+
+  /* Lignes de détail selon la catégorie */
+  let detailRows = '';
+  if (cat === 'grand') {
+    detailRows = `
+      <div class="bpi-f"><span class="bpi-fl">Format :</span><span class="bpi-fv">${esc(b.formatL||'—')} × ${esc(b.formatH||'—')}</span></div>
+      <div class="bpi-f"><span class="bpi-fl">Matière :</span><span class="bpi-fv">${esc(b.matiere||'—')}</span></div>
+      ${b.decoupe ? `<div class="bpi-f"><span class="bpi-fl">Découpe :</span><span class="bpi-fv">${esc(b.decoupe)}</span></div>` : ''}
+      <div class="bpi-f"><span class="bpi-fl">Qté :</span><span class="bpi-fv">${b.exemplaires||1} ex.</span></div>
+      ${b.modeles ? `<div class="bpi-f"><span class="bpi-fl">Modèles :</span><span class="bpi-fv">${b.modeles}</span></div>` : ''}
+      ${b.finitions&&b.finitions.length ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finitions :</span><span class="bpi-fv">${b.finitions.map(f=>esc(f)).join(' · ')}</span></div>` : ''}
+      ${b.finition ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finition :</span><span class="bpi-fv">${esc(b.finition)}</span></div>` : ''}`;
+  } else {
+    detailRows = `
+      <div class="bpi-f"><span class="bpi-fl">Format :</span><span class="bpi-fv">${esc(b.formatPetit||'—')}</span></div>
+      <div class="bpi-f"><span class="bpi-fl">Impression :</span><span class="bpi-fv">${esc(b.impression||'—')}</span></div>
+      ${b.decoupe ? `<div class="bpi-f"><span class="bpi-fl">Découpe :</span><span class="bpi-fv">${esc(b.decoupe)}</span></div>` : ''}
+      <div class="bpi-f"><span class="bpi-fl">Qté :</span><span class="bpi-fv">${b.exemplaires||1} ex.</span></div>
+      ${b.modeles ? `<div class="bpi-f"><span class="bpi-fl">Modèles :</span><span class="bpi-fv">${b.modeles}</span></div>` : ''}`;
+  }
+
+  /* Visuels */
+  const imgs = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
+  const regKey = '_lb_' + b.id.replace(/[^a-z0-9]/gi,'_');
+  window[regKey] = imgs;
+
   return `
 <div class="bpi-item">
   <div class="bpi-head">
     <span class="bpi-num">BPI #${String(i+1).padStart(2,'0')}</span>
     <div class="bpi-right">
-      <span class="bpi-type-badge">${b.type === 'souple' ? '🪁 Souple' : '🔩 Rigide'}</span>
+      <span class="bpi-type-badge">${catBadge}</span>
       ${isBrouillon ? `
       <button class="btn-edit-bpi" onclick="openEditBPI('${demandeId}','${b.id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -682,12 +793,7 @@ function bpiHTML(b, i, demandeId, isBrouillon, statut) {
   <div class="bpi-grid">
     <div class="bpi-f"><span class="bpi-fl">Client :</span><span class="bpi-fv">${esc(b.client)}</span></div>
     <div class="bpi-f"><span class="bpi-fl">Cmd :</span><span class="bpi-fv">${esc(b.commande||'—')}</span></div>
-    <div class="bpi-f"><span class="bpi-fl">Format :</span><span class="bpi-fv">${esc(b.formatL)} × ${esc(b.formatH)}</span></div>
-    <div class="bpi-f"><span class="bpi-fl">Matière :</span><span class="bpi-fv">${esc(b.matiere)}</span></div>
-    ${b.epaisseur ? `<div class="bpi-f"><span class="bpi-fl">Épaisseur :</span><span class="bpi-fv">${esc(b.epaisseur)}</span></div>` : ''}
-    <div class="bpi-f"><span class="bpi-fl">Qté :</span><span class="bpi-fv">${b.exemplaires} ex.</span></div>
-    ${b.modeles ? `<div class="bpi-f"><span class="bpi-fl">Modèles :</span><span class="bpi-fv">${b.modeles}</span></div>` : ''}
-    ${b.finition ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finition :</span><span class="bpi-fv">${esc(b.finition)}</span></div>` : ''}
+    ${detailRows}
   </div>
   ${b.commentaire ? `<div class="bpi-comment"><strong>Commentaire</strong>${esc(b.commentaire)}</div>` : ''}
   ${b.lien ? `<div style="margin-top:8px;padding:6px 10px;border:1px solid var(--border);background:var(--paper);font-size:12px;display:flex;align-items:center;gap:8px;">
@@ -695,23 +801,14 @@ function bpiHTML(b, i, demandeId, isBrouillon, statut) {
     <a href="${esc(b.lien)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-family:var(--font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Lien des fichiers</a>
     <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${esc(b.lien.replace(/^https?:\/\//,'').slice(0,40))}${b.lien.length>47?'…':''}</span>
   </div>` : ''}
-  ${(() => {
-    const imgs = Array.isArray(b.visuels) && b.visuels.length ? b.visuels : (b.visuel ? [b.visuel] : []);
-    if (!imgs.length) return '';
-    /* Stocker les images dans le registre global pour éviter les problèmes de quotes */
-    const regKey = '_lb_' + b.id.replace(/[^a-z0-9]/gi,'_');
-    window[regKey] = imgs;
-    return `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">` +
-      imgs.map((src, i) => `
-        <div style="width:70px;height:70px;flex-shrink:0;cursor:zoom-in;border:1px solid var(--border);overflow:hidden;"
-             onclick="openLightbox(window['${regKey}'],${i})"
-             title="Cliquer pour agrandir">
-          <img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Visuel ${i+1}"/>
-        </div>`).join('') +
-      `</div>`;
-  })()}
-</div>`;
-}
+  ${imgs.length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">` +
+    imgs.map((src, idx) => `
+      <div style="width:70px;height:70px;flex-shrink:0;cursor:zoom-in;border:1px solid var(--border);overflow:hidden;"
+           onclick="openLightbox(window['${regKey}'],${idx})" title="Cliquer pour agrandir">
+        <img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Visuel ${idx+1}"/>
+      </div>`).join('') + `</div>` : ''}
+</div>`;}
+
 
 function msgHTML(m) {
   const ini  = (m.author||'?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
@@ -958,13 +1055,223 @@ function resetBPIForm() {
   _visuels = [];
 }
 
-function onTypeChange() {
-  const type = document.getElementById('b-type').value;
-  const sel  = document.getElementById('b-matiere');
-  const opts = type==='souple' ? ['Adhésif','Bâche','Dépoli'] : type==='rigide' ? ['PVC','Dibond','Plexiglas','Bois'] : [];
-  sel.innerHTML = opts.length ? '<option value="">Choisir…</option>'+opts.map(o=>`<option>${o}</option>`).join('') : '<option value="">Choisir le type d\'abord</option>';
-  document.getElementById('ff-epaisseur').style.display = type==='rigide' ? '' : 'none';
-  if (type!=='rigide') document.getElementById('b-epaisseur').value = '';
+/* ══════════════════════════════
+   DONNÉES BPI
+══════════════════════════════ */
+const MATIERES_SOUPLE = [
+  'Adhésif MAT','Adhésif Brillant','Adhésif enlevable','Adhésif VCR',
+  'Adhésif Transparent ultra clear','Adhésif dépoli','Adhésif Microperforé',
+  'Electrostatique blanc','Electrostatique transparent',
+  'Affiche PAPIER','Affiche PVC Souple dos gris','Duratrans',
+  'Bâche 1 face','Bâche recto verso','Bâche microperforé',
+  'Papier peint','Papier cadeau','Aimant','Ferreux','Lino',
+  'Toile dos gris'
+];
+const MATIERES_RIGIDE = [
+  'PVC 1mm','PVC 2mm','PVC 3mm','PVC 5mm','PVC 10mm','PVC 19mm',
+  'COM 6.5mm','COM 10mm','COM 19mm',
+  'Alu 2mm blanc','Alu 3mm blanc','Alu 3mm brossé argent','Alu 3mm brossé doré',
+  'Plexi transparent 3mm','Plexi transparent 5mm','Plexi transparent 10mm','Plexi transparent 19mm',
+  'Bois Médium 18mm','Bois Hevea 19mm',
+  'PVC 5mm Noir','PVC 10mm Noir','PVC 19mm Noir'
+];
+const FINITIONS_GF = [
+  'Oeillets 4 coins',
+  'Oeillets périmètre tous les 50cm',
+  'Oeillets haut',
+  'Oeillets bas',
+  'Oeillets gauche',
+  'Oeillets droite',
+  'Double face dorsal contour',
+  'Double face dorsal total',
+  'Pose chevalet',
+  'Pied plat',
+  'Pied croisé',
+  'Pied plié à chaud',
+  'Pliage à chaud',
+  'Plastification MAT',
+  'Plastification Brillante',
+  'Plastification Anti dérapante',
+  'Plastification Velleda',
+  'Plastification Anti TAG',
+  'Fourreau haut',
+  'Fourreau bas',
+  'Fourreau latéral gauche',
+  'Fourreau latéral droit'
+];
+
+/* ══════════════════════════════
+   GESTION DU FORMULAIRE BPI
+══════════════════════════════ */
+let _bpiCategorie = ''; // 'grand' | 'petit'
+
+function setCategorie(cat) {
+  _bpiCategorie = cat;
+  /* Style boutons */
+  document.getElementById('cat-btn-grand').style.borderColor = cat==='grand' ? 'var(--ink)' : 'var(--border)';
+  document.getElementById('cat-btn-grand').style.background  = cat==='grand' ? 'var(--ink)'  : 'white';
+  document.getElementById('cat-btn-grand').querySelector('span').style.color = cat==='grand' ? 'white' : '';
+  document.getElementById('cat-btn-petit').style.borderColor = cat==='petit' ? 'var(--ink)' : 'var(--border)';
+  document.getElementById('cat-btn-petit').style.background  = cat==='petit' ? 'var(--ink)'  : 'white';
+  document.getElementById('cat-btn-petit').querySelector('span').style.color = cat==='petit' ? 'white' : '';
+
+  document.getElementById('section-grand').style.display  = cat==='grand' ? '' : 'none';
+  document.getElementById('section-petit').style.display  = cat==='petit' ? '' : 'none';
+  document.getElementById('section-commun').style.display = cat ? '' : 'none';
+
+  if (cat==='grand') buildFinitionsGrid();
+}
+
+function onTypeGrandChange() {
+  const type = document.getElementById('b-type-grand').value;
+  const sel  = document.getElementById('b-matiere-grand');
+  const list = type==='souple' ? MATIERES_SOUPLE : type==='rigide' ? MATIERES_RIGIDE : [];
+  sel.innerHTML = list.length
+    ? '<option value="">Choisir…</option>' + list.map(m=>`<option>${m}</option>`).join('')
+    : '<option value="">Choisir le type d\'abord</option>';
+}
+
+function buildFinitionsGrid(selected=[]) {
+  const grid = document.getElementById('finitions-grid');
+  grid.innerHTML = FINITIONS_GF.map(f => {
+    const checked = selected.includes(f);
+    return `
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:4px 6px;border-radius:2px;"
+             onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''">
+        <input type="checkbox" name="bpi-finition" value="${f}" ${checked?'checked':''} style="width:13px;height:13px;cursor:pointer;accent-color:var(--ink);"/>
+        ${esc(f)}
+      </label>`;
+  }).join('');
+}
+
+function getSelectedFinitions() {
+  return Array.from(document.querySelectorAll('input[name="bpi-finition"]:checked')).map(cb => cb.value);
+}
+
+/* ══ Reset ══ */
+function resetBPIForm() {
+  /* Catégorie */
+  _bpiCategorie = '';
+  ['cat-btn-grand','cat-btn-petit'].forEach(id => {
+    document.getElementById(id).style.borderColor = 'var(--border)';
+    document.getElementById(id).style.background  = 'white';
+    document.getElementById(id).querySelector('span').style.color = '';
+  });
+  document.getElementById('section-grand').style.display  = 'none';
+  document.getElementById('section-petit').style.display  = 'none';
+  document.getElementById('section-commun').style.display = 'none';
+
+  /* Grand format */
+  ['b-format-l','b-format-h'].forEach(id => { document.getElementById(id).value=''; });
+  document.getElementById('b-decoupe-grand').value  = '';
+  document.getElementById('b-type-grand').value     = '';
+  document.getElementById('b-matiere-grand').innerHTML = '<option value="">Choisir le type d\'abord</option>';
+  document.getElementById('finitions-grid').innerHTML = '';
+
+  /* Petit format */
+  document.getElementById('b-format-petit').value  = '';
+  document.getElementById('b-impression').value    = '';
+  document.getElementById('b-decoupe-petit').value = '';
+
+  /* Communs */
+  ['b-modeles','b-exemplaires','b-lien','b-commentaire'].forEach(id => { document.getElementById(id).value=''; });
+  document.getElementById('b-visuels').value = '';
+  document.getElementById('b-previews').innerHTML = '';
+  _visuels = [];
+}
+
+/* ══ Pré-remplissage en édition ══ */
+function prefillBPIForm(b) {
+  const cat = b.categorie || (b.type ? 'grand' : '');
+  if (cat) {
+    setCategorie(cat);
+    if (cat === 'grand') {
+      document.getElementById('b-format-l').value       = parseFloat(b.formatL)||'';
+      document.getElementById('b-format-h').value       = parseFloat(b.formatH)||'';
+      document.getElementById('b-decoupe-grand').value  = b.decoupe||'';
+      document.getElementById('b-type-grand').value     = b.type||'';
+      onTypeGrandChange();
+      document.getElementById('b-matiere-grand').value  = b.matiere||'';
+      buildFinitionsGrid(b.finitions||[]);
+    } else {
+      document.getElementById('b-format-petit').value   = b.formatPetit||'';
+      document.getElementById('b-impression').value     = b.impression||'';
+      document.getElementById('b-decoupe-petit').value  = b.decoupe||'';
+    }
+  }
+  document.getElementById('b-modeles').value      = b.modeles||'';
+  document.getElementById('b-exemplaires').value  = b.exemplaires||1;
+  document.getElementById('b-lien').value         = b.lien||'';
+  document.getElementById('b-commentaire').value  = b.commentaire||'';
+  _visuels = (Array.isArray(b.visuels) ? b.visuels : (b.visuel ? [b.visuel] : [])).map(v => typeof v==='string'?v:v.src);
+  renderPreviews();
+}
+
+/* ══ Sauvegarde ══ */
+function saveBPI() {
+  const d = CACHE.find(x => x.id === _bpiDemandeId);
+  if (!d) return;
+
+  if (!_bpiCategorie) { showToast('Choisir Grand Format ou Petit Format.'); return; }
+
+  const qte     = parseInt(document.getElementById('b-exemplaires').value)||1;
+  const modeles = parseInt(document.getElementById('b-modeles').value)||null;
+  const comment = document.getElementById('b-commentaire').value.trim();
+  const lien    = document.getElementById('b-lien').value.trim();
+
+  let specific = {};
+
+  if (_bpiCategorie === 'grand') {
+    const fL      = document.getElementById('b-format-l').value.trim();
+    const fH      = document.getElementById('b-format-h').value.trim();
+    const type    = document.getElementById('b-type-grand').value;
+    const matiere = document.getElementById('b-matiere-grand').value;
+    if (!fL||!fH||isNaN(parseFloat(fL))||isNaN(parseFloat(fH))) { showToast('Saisir largeur et hauteur valides (cm).'); return; }
+    if (!type||!matiere) { showToast('Choisir le type et la matière.'); return; }
+    specific = {
+      formatL:   parseFloat(fL)+' cm',
+      formatH:   parseFloat(fH)+' cm',
+      decoupe:   document.getElementById('b-decoupe-grand').value,
+      type, matiere,
+      finitions: getSelectedFinitions()
+    };
+  } else {
+    const formatPetit = document.getElementById('b-format-petit').value;
+    const impression  = document.getElementById('b-impression').value;
+    if (!formatPetit||!impression) { showToast('Choisir le format et le type d\'impression.'); return; }
+    specific = {
+      formatPetit, impression,
+      decoupe: document.getElementById('b-decoupe-petit').value
+    };
+  }
+
+  const bpis = [...(d.bpis||[])];
+  const payload = {
+    id:          _bpiEditId||('bpi_'+Date.now()),
+    client:      d.client,
+    commande:    d.commande,
+    categorie:   _bpiCategorie,
+    ...specific,
+    exemplaires: qte,
+    modeles:     modeles||null,
+    commentaire: comment,
+    lien:        lien||null,
+    visuels:     _visuels.map(v => typeof v==='string'?v:v.src),
+    visuel:      (_visuels[0] ? (typeof _visuels[0]==='string'?_visuels[0]:_visuels[0].src) : null)
+  };
+
+  if (_bpiEditId) { const idx=bpis.findIndex(x=>x.id===_bpiEditId); if(idx!==-1) bpis[idx]=payload; }
+  else bpis.push(payload);
+
+  const btn = document.getElementById('btn-save-bpi');
+  btn.disabled = true;
+  COL.doc(_bpiDemandeId).update({ bpis })
+    .then(() => {
+      showToast(_bpiEditId?'BPI modifié !':'BPI ajouté !');
+      addLog('bpi', `BPI ${_bpiEditId?'modifié':'ajouté'} sur ${d.commande}`, _bpiDemandeId);
+      closeModal('overlay-bpi'); btn.disabled=false; _visuels=[];
+    })
+    .catch(e => { showToast('Erreur : '+e.message); btn.disabled=false; });
 }
 
 /* ── Visuels multiples ── */
@@ -1047,52 +1354,6 @@ function removeVisuel(i) {
   renderPreviews();
 }
 
-function saveBPI() {
-  const d = CACHE.find(x => x.id === _bpiDemandeId);
-  if (!d) return;
-  const client   = d.client; // toujours celui de la demande, non modifiable
-  const fL       = document.getElementById('b-format-l').value.trim();
-  const fH       = document.getElementById('b-format-h').value.trim();
-  const type     = document.getElementById('b-type').value;
-  const matiere  = document.getElementById('b-matiere').value;
-  const epaisseur= document.getElementById('b-epaisseur').value.trim();
-  const finition = document.getElementById('b-finition').value.trim();
-  const comment  = document.getElementById('b-commentaire').value.trim();
-  const lien     = document.getElementById('b-lien').value.trim();
-  const qte      = parseInt(document.getElementById('b-exemplaires').value)||1;
-  const modeles  = parseInt(document.getElementById('b-modeles').value)||null;
-
-  if (!client||!type||!matiere) { showToast('Remplir les champs obligatoires.'); return; }
-  if (!fL||!fH||isNaN(parseFloat(fL))||isNaN(parseFloat(fH))) { showToast('Saisir largeur et hauteur valides (cm).'); return; }
-
-  const bpis = [...(d.bpis||[])];
-  const payload = {
-    id: _bpiEditId||('bpi_'+Date.now()),
-    client, commande: d.commande,
-    formatL: parseFloat(fL)+' cm', formatH: parseFloat(fH)+' cm',
-    type, matiere,
-    epaisseur: type==='rigide' && epaisseur ? parseFloat(epaisseur)+' mm' : '',
-    finition, commentaire: comment, lien: lien||null,
-    exemplaires: qte,
-    modeles: modeles || null,
-    /* Normaliser : extraire les src (string brut ou objet {src, isPdf}) */
-    visuels: _visuels.map(v => typeof v === 'string' ? v : v.src),
-    visuel: (_visuels[0] ? (typeof _visuels[0] === 'string' ? _visuels[0] : _visuels[0].src) : null)
-  };
-
-  if (_bpiEditId) { const idx=bpis.findIndex(x=>x.id===_bpiEditId); if(idx!==-1) bpis[idx]=payload; }
-  else bpis.push(payload);
-
-  const btn = document.getElementById('btn-save-bpi');
-  btn.disabled = true;
-  COL.doc(_bpiDemandeId).update({ bpis })
-    .then(() => {
-      showToast(_bpiEditId?'BPI modifié !':'BPI ajouté !');
-      addLog('bpi', `BPI ${_bpiEditId?'modifié':'ajouté'} sur ${d.commande}`, _bpiDemandeId);
-      closeModal('overlay-bpi'); btn.disabled=false; _visuels=[];
-    })
-    .catch(e => { showToast('Erreur : '+e.message); btn.disabled=false; });
-}
 
 /* ══ IMPRESSION BPI ══ */
 function printBPI(demandeId, bpiId) {
@@ -1344,21 +1605,35 @@ function printBPI(demandeId, bpiId) {
         <span class="field-val f-md" style="margin-top:4px;font-weight:700;letter-spacing:0;">Livraison : ${livraison}</span>
       </div>
 
-      <div class="field-block">
-        <span class="field-lbl">Matière</span>
-        <span class="field-val f-lg">${b.matiere}</span>
-      </div>
-
+      ${b.categorie === 'petit' ? `
       <div class="field-block">
         <span class="field-lbl">Format</span>
-        <span class="field-val f-md">${b.formatL} × ${b.formatH}</span>
+        <span class="field-val f-lg">${b.formatPetit||'—'}</span>
       </div>
-
-      ${b.epaisseur ? `
       <div class="field-block">
-        <span class="field-lbl">Épaisseur</span>
-        <span class="field-val f-sm">${b.epaisseur}</span>
+        <span class="field-lbl">Impression</span>
+        <span class="field-val f-md">${b.impression||'—'}</span>
+      </div>
+      ${b.decoupe ? `
+      <div class="field-block">
+        <span class="field-lbl">Découpe</span>
+        <span class="field-val f-sm">${b.decoupe}</span>
       </div>` : ''}
+      ` : `
+      <div class="field-block">
+        <span class="field-lbl">Matière</span>
+        <span class="field-val f-lg">${b.matiere||'—'}</span>
+      </div>
+      <div class="field-block">
+        <span class="field-lbl">Format</span>
+        <span class="field-val f-md">${b.formatL||'—'} × ${b.formatH||'—'}</span>
+      </div>
+      ${b.decoupe ? `
+      <div class="field-block">
+        <span class="field-lbl">Découpe</span>
+        <span class="field-val f-sm">${b.decoupe}</span>
+      </div>` : ''}
+      `}
 
       <div class="field-block">
         <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;">
@@ -1385,7 +1660,11 @@ function printBPI(demandeId, bpiId) {
         <span class="field-val f-sm" style="font-weight:500;line-height:1.4;">${b.commentaire}</span>
       </div>` : ''}
 
-      ${b.finition ? `
+      ${(b.finitions && b.finitions.length) ? `
+      <div class="finition-block">
+        <div class="finition-lbl">Finitions</div>
+        <div class="finition-val">${b.finitions.join(' · ')}</div>
+      </div>` : b.finition ? `
       <div class="finition-block">
         <div class="finition-lbl">Finition</div>
         <div class="finition-val">${b.finition}</div>
@@ -1418,7 +1697,9 @@ function printBPI(demandeId, bpiId) {
                      style="width:100%;height:${availH};max-height:${availH};object-fit:contain;flex:1;min-height:0;"
                      alt=""/>
                 <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:#333;text-align:center;line-height:1.2;white-space:nowrap;flex-shrink:0;">
-                  ${b.formatL} × ${b.formatH}${b.epaisseur ? ` · ${b.epaisseur}` : ''} · <strong>${b.exemplaires} ex.</strong>
+                  ${b.categorie === 'petit'
+                    ? `${b.formatPetit||'—'} · ${b.impression||''}`
+                    : `${b.formatL||'—'} × ${b.formatH||'—'}`} · <strong>${b.exemplaires} ex.</strong>
                 </div>
               </div>`;
           }).join('')}
