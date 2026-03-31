@@ -183,6 +183,29 @@
   </div>
 </div>
 
+<!-- ══ MODALE CONFIRMATION SUPPRESSION BPI ══ -->
+<div class="overlay" id="overlay-confirm-bpi">
+  <div class="modal" style="width:420px;">
+    <div class="modal-head">
+      <div class="modal-title">Supprimer ce BPI ?</div>
+      <button class="modal-close" onclick="closeModal('overlay-confirm-bpi')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">Supprimer le BPI <strong id="confirm-bpi-label" style="color:var(--ink);"></strong> ?</p>
+      <p style="margin-top:12px;padding:8px 12px;background:#fde8e4;font-family:var(--font-mono);font-size:11px;color:var(--accent);">⚠ Cette action est irréversible.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeModal('overlay-confirm-bpi')">Annuler</button>
+      <button class="btn-primary" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDeleteBPI()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Supprimer le BPI
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODALE CONFIRMATION SUPPRESSION ══ -->
 <div class="overlay" id="overlay-confirm">
   <div class="modal" style="width:420px;">
@@ -351,7 +374,7 @@
           </div>
           <div class="ff full" id="ff-matiere-grand">
             <label>Matière <em>*</em></label>
-            <select class="fs" id="b-matiere-grand">
+            <select class="fs" id="b-matiere-grand" onchange="onMatiereGrandChange()">
               <option value="">Choisir le type d'abord</option>
             </select>
           </div>
@@ -449,7 +472,7 @@
 
 <!-- PDF.js pour l'aperçu des PDFs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+<script>try { if(typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}</script>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -783,6 +806,10 @@ function bpiHTML(b, i, demandeId, isBrouillon, statut) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Modifier
       </button>` : ''}
+      ${isBrouillon && (b.createurEmail === ME.email || b.createur === ME.name || !b.createurEmail) ? `
+      <button class="btn-del" style="width:24px;height:24px;" title="Supprimer ce BPI" onclick="askDeleteBPI('${demandeId}','${b.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+      </button>` : ''}
       ${canPrint ? `
       <button class="btn-print-bpi" onclick="printBPI('${demandeId}','${b.id}')" title="Imprimer ce BPI">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -978,7 +1005,36 @@ function saveDemande() {
     .catch(e => { showToast('Erreur Firebase : ' + e.message); btn.disabled = false; });
 }
 
-/* ══ SUPPRESSION ══ */
+/* ══ SUPPRESSION BPI ══ */
+let _deleteBpiDemandeId = null, _deleteBpiId = null;
+
+function askDeleteBPI(demandeId, bpiId) {
+  const d = CACHE.find(x => x.id === demandeId);
+  if (!d) return;
+  const b = (d.bpis||[]).find(x => x.id === bpiId);
+  if (!b) return;
+  const bpiIndex = (d.bpis||[]).findIndex(x => x.id === bpiId) + 1;
+  _deleteBpiDemandeId = demandeId;
+  _deleteBpiId = bpiId;
+  document.getElementById('confirm-bpi-label').textContent = `BPI #${String(bpiIndex).padStart(2,'0')} — ${d.commande}`;
+  openModal('overlay-confirm-bpi');
+}
+
+function confirmDeleteBPI() {
+  const d = CACHE.find(x => x.id === _deleteBpiDemandeId);
+  if (!d) return;
+  const bpis = (d.bpis||[]).filter(x => x.id !== _deleteBpiId);
+  COL.doc(_deleteBpiDemandeId).update({ bpis })
+    .then(() => {
+      showToast('BPI supprimé.');
+      addLog('bpi', `BPI supprimé sur ${d.commande}`, _deleteBpiDemandeId);
+    })
+    .catch(e => showToast('Erreur : ' + e.message));
+  _deleteBpiDemandeId = null; _deleteBpiId = null;
+  closeModal('overlay-confirm-bpi');
+}
+
+/* ══ SUPPRESSION DEMANDE ══ */
 let _deleteId = null;
 function askDelete(id) {
   const d = CACHE.find(x => x.id === id);
@@ -1106,17 +1162,52 @@ function onTypeGrandChange() {
   sel.innerHTML = list.length
     ? '<option value="">Choisir…</option>' + list.map(m=>`<option>${m}</option>`).join('')
     : '<option value="">Choisir le type d\'abord</option>';
+  /* Reconstruire les finitions selon le type */
+  buildFinitionsGrid(getSelectedFinitions());
+}
+
+function onMatiereGrandChange() {
+  /* Reconstruire les finitions selon la matière choisie */
+  buildFinitionsGrid(getSelectedFinitions());
 }
 
 function buildFinitionsGrid(selected=[]) {
+  const type    = document.getElementById('b-type-grand').value;
+  const matiere = document.getElementById('b-matiere-grand').value;
+  const isBache  = matiere.toLowerCase().includes('bâche');
+  const isRigide = type === 'rigide';
+
+  /* Règles de disponibilité :
+     - Oeillets & Fourreaux → Bâche uniquement
+     - Pieds & Pliage à chaud → Rigide uniquement
+  */
+  const OEILLETS   = ['Oeillets 4 coins','Oeillets périmètre tous les 50cm','Oeillets haut','Oeillets bas','Oeillets gauche','Oeillets droite'];
+  const FOURREAUX  = ['Fourreau haut','Fourreau bas','Fourreau latéral gauche','Fourreau latéral droit'];
+  const PIEDS      = ['Pied plat','Pied croisé','Pied plié à chaud','Pliage à chaud'];
+
   const grid = document.getElementById('finitions-grid');
   grid.innerHTML = FINITIONS_GF.map(f => {
-    const checked = selected.includes(f);
+    const checked    = selected.includes(f);
+    const isOeillet  = OEILLETS.includes(f);
+    const isFourreau = FOURREAUX.includes(f);
+    const isPied     = PIEDS.includes(f);
+
+    /* Déterminer si disponible */
+    let disabled = false;
+    let reason   = '';
+    if ((isOeillet || isFourreau) && !isBache)  { disabled = true; reason = 'Bâche uniquement'; }
+    if (isPied && !isRigide)                      { disabled = true; reason = 'Rigide uniquement'; }
+
     return `
-      <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:4px 6px;border-radius:2px;"
-             onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''">
-        <input type="checkbox" name="bpi-finition" value="${f}" ${checked?'checked':''} style="width:13px;height:13px;cursor:pointer;accent-color:var(--ink);"/>
-        ${esc(f)}
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:${disabled?'not-allowed':'pointer'};padding:4px 6px;border-radius:2px;opacity:${disabled?'.35':'1'};"
+             title="${disabled ? reason : ''}"
+             ${!disabled ? `onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''"` : ''}>
+        <input type="checkbox" name="bpi-finition" value="${f}"
+               ${checked && !disabled ? 'checked' : ''}
+               ${disabled ? 'disabled' : ''}
+               style="width:13px;height:13px;cursor:${disabled?'not-allowed':'pointer'};accent-color:var(--ink);"/>
+        <span>${esc(f)}</span>
+        ${disabled ? `<span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-left:auto;">${reason}</span>` : ''}
       </label>`;
   }).join('');
 }
@@ -1224,10 +1315,12 @@ function saveBPI() {
 
   const bpis = [...(d.bpis||[])];
   const payload = {
-    id:          _bpiEditId||('bpi_'+Date.now()),
-    client:      d.client,
-    commande:    d.commande,
-    categorie:   _bpiCategorie,
+    id:           _bpiEditId||('bpi_'+Date.now()),
+    client:       d.client,
+    commande:     d.commande,
+    categorie:    _bpiCategorie,
+    createur:     _bpiEditId ? (d.bpis||[]).find(x=>x.id===_bpiEditId)?.createur || ME.name : ME.name,
+    createurEmail: _bpiEditId ? (d.bpis||[]).find(x=>x.id===_bpiEditId)?.createurEmail || ME.email : ME.email,
     ...specific,
     exemplaires: qte,
     modeles:     modeles||null,
@@ -1260,7 +1353,8 @@ function previewImgs(input) {
 
   files.forEach(f => {
     if (f.type === 'application/pdf') {
-      /* ── Aperçu PDF : rendu de la page 1 via PDF.js ── */
+      /* ── Aperçu PDF via PDF.js (si disponible) ── */
+      if (typeof pdfjsLib === 'undefined') { showToast('PDF.js non disponible, utilisez une image.'); return; }
       const reader = new FileReader();
       reader.onload = e => {
         const typedArray = new Uint8Array(e.target.result);
