@@ -278,10 +278,6 @@
           </select>
         </div>
         <div class="ff full">
-          <label>Référence <em>*</em></label>
-          <input type="text" class="fi" id="d-reference" placeholder="Ex : REF-2026-001"/>
-        </div>
-        <div class="ff full">
           <label>Commentaire initial</label>
           <textarea class="ft" id="d-commentaire" placeholder="Instructions, contexte, remarques sur cette commande…" rows="3"></textarea>
         </div>
@@ -394,20 +390,6 @@
       <div id="section-petit" style="display:none;">
         <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 0 8px;border-top:1px solid var(--border);margin-top:12px;">Petit Format</div>
         <div class="fg">
-
-          <div class="ff">
-            <label>Produit <em>*</em></label>
-            <select class="fs" id="b-produit" onchange="onProduitChange()">
-              <option value="">Choisir…</option>
-              <option>Flyer</option>
-              <option>Carte de visite</option>
-              <option>Brochure</option>
-              <option>Dépliant</option>
-              <option>Fiche</option>
-              <option>Affiche</option>
-            </select>
-          </div>
-
           <div class="ff">
             <label>Format <em>*</em></label>
             <select class="fs" id="b-format-petit">
@@ -415,152 +397,33 @@
               <option>Carte de visite</option>
               <option>A7</option>
               <option>10x10cm</option>
-              <option>10x21</option>
               <option>A6</option>
               <option>A5</option>
               <option>A4</option>
               <option>A3</option>
+              <option>A2</option>
+              <option>A1</option>
+              <option>A0</option>
             </select>
           </div>
-
-          <div class="ff full">
-            <label>Type de papier <em>*</em></label>
-            <select class="fs" id="b-papier" onchange="onPapierChange()">
-              <option value="">Choisir…</option>
-              <optgroup label="Offset">
-                <option>90gr offset</option>
-                <option>120gr offset</option>
-                <option>170gr offset</option>
-                <option>200gr offset</option>
-                <option>250gr offset</option>
-                <option>300gr offset</option>
-                <option>350gr offset</option>
-              </optgroup>
-              <optgroup label="Matt couché">
-                <option>135gr Matt</option>
-                <option>150gr Matt</option>
-                <option>250gr Matt</option>
-                <option>300gr Matt</option>
-                <option>350gr Matt</option>
-              </optgroup>
-              <optgroup label="Brillant couché">
-                <option>135gr Brillant</option>
-                <option>150gr Brillant</option>
-                <option>250gr Brillant</option>
-                <option>300gr Brillant</option>
-                <option>350gr Brillant</option>
-              </optgroup>
-              <optgroup label="Tradition">
-                <option>120gr tradition extra blanc</option>
-                <option>120gr tradition blanc naturel</option>
-                <option>170gr tradition extra blanc</option>
-                <option>170gr tradition blanc naturel</option>
-                <option>250gr tradition extra blanc</option>
-                <option>320gr tradition blanc naturel</option>
-              </optgroup>
-              <optgroup label="Autocollant">
-                <option>Autocollant Matt</option>
-                <option>Autocollant Brillant</option>
-                <option>Autocollant SID</option>
-              </optgroup>
-              <optgroup label="Recyclé">
-                <option>120gr recyclé</option>
-                <option>300gr recyclé</option>
-              </optgroup>
-              <optgroup label="Spéciaux">
-                <option>100gr opale filigranné</option>
-                <option>120gr calque</option>
-                <option>150gr calque</option>
-                <option>140gr Tintoretto</option>
-                <option>200gr Tintoretto</option>
-                <option>300gr Tintoretto</option>
-                <option>285gr Woodstock</option>
-                <option>Autocopiant</option>
-                <option>Sandwich</option>
-                <option>80gr Craft</option>
-                <option>307gr Craft</option>
-              </optgroup>
-              <optgroup label="Old Mill White">
-                <option>100gr old mill white</option>
-                <option>130gr old mill white</option>
-                <option>190gr old mill white</option>
-                <option>250gr old mill white</option>
-                <option>300gr old mill white</option>
-              </optgroup>
-              <optgroup label="Old Mill Bianco">
-                <option>100gr old mill bianco</option>
-                <option>130gr old mill bianco</option>
-                <option>190gr old mill bianco</option>
-                <option>250gr old mill bianco</option>
-                <option>300gr old mill bianco</option>
-              </optgroup>
-              <optgroup label="Materica">
-                <option>120gr materica</option>
-                <option>160gr materica</option>
-                <option>300gr materica</option>
-              </optgroup>
-              <optgroup label="Aquarello">
-                <option>120gr aquarello</option>
-                <option>160gr aquarello</option>
-                <option>280gr aquarello</option>
-              </optgroup>
-            </select>
-          </div>
-
           <div class="ff">
             <label>Impression <em>*</em></label>
             <select class="fs" id="b-impression">
               <option value="">Choisir…</option>
               <option>Recto seul</option>
               <option>Recto verso</option>
+              <option>Recto seul (miroir) + blanc total</option>
+              <option>Recto seul (miroir) + blanc sélectif</option>
             </select>
           </div>
-
           <div class="ff">
             <label>Découpe</label>
             <select class="fs" id="b-decoupe-petit">
               <option value="">Aucune</option>
-              <option>Découpe simple</option>
-              <option>Découpe duplo</option>
-              <option>Découpe typo</option>
+              <option value="Découpe simple">Découpe simple</option>
+              <option value="Découpe à la forme">Découpe à la forme</option>
             </select>
           </div>
-
-          <!-- Pelliculage — uniquement papier 300gr ou 350gr -->
-          <div class="ff" id="ff-pelliculage" style="display:none;">
-            <label>Pelliculage</label>
-            <select class="fs" id="b-pelliculage">
-              <option value="">Aucun</option>
-              <option>Brillant</option>
-              <option>Matt</option>
-              <option>Soft touch</option>
-            </select>
-          </div>
-
-          <!-- Plastification — uniquement papier 170gr ou 250gr -->
-          <div class="ff" id="ff-plastification-petit" style="display:none;">
-            <label>Plastification</label>
-            <select class="fs" id="b-plastification-petit">
-              <option value="">Aucune</option>
-              <option>Plastification</option>
-            </select>
-          </div>
-
-          <!-- Rainage + Pliage — uniquement si produit = Dépliant -->
-          <div class="ff" id="ff-rainage" style="display:none;">
-            <label>Rainage</label>
-            <input type="text" class="fi" id="b-rainage" placeholder="Ex : 1 rainage central"/>
-          </div>
-          <div class="ff" id="ff-pliage" style="display:none;">
-            <label>Pliage</label>
-            <input type="text" class="fi" id="b-pliage" placeholder="Ex : Pliage en Z, pliage accordéon…"/>
-          </div>
-
-          <div class="ff full">
-            <label>Autre</label>
-            <input type="text" class="fi" id="b-autre" placeholder="Précisions supplémentaires…"/>
-          </div>
-
         </div>
       </div>
 
@@ -739,8 +602,6 @@ COL.orderBy('createdAt', 'desc').onSnapshot(
     CACHE = newCache;
     setFbStatus(true, 'Connecté');
     renderList();
-    /* Ouvrir automatiquement la demande si ?open=ID dans l'URL */
-    openFromURL();
   },
   err => {
     console.error(err);
@@ -861,7 +722,6 @@ function cardHTML(d) {
       <div class="col">
         <div class="col-title">Détails</div>
         <div class="detail-row"><span class="dl">N° commande</span><span class="dv mono">${esc(d.commande||'—')}</span></div>
-        <div class="detail-row"><span class="dl">Référence</span><span class="dv">${esc(d.reference||'—')}</span></div>
         <div class="detail-row"><span class="dl">Client</span><span class="dv">${esc(d.client)}</span></div>
         <div class="detail-row"><span class="dl">Livraison</span><span class="dv">${liv}</span></div>
         <div class="detail-row"><span class="dl">Expédition</span><span class="dv">${EXPEDITIONS[d.expedition]||'—'}</span></div>
@@ -927,18 +787,11 @@ function bpiHTML(b, i, demandeId, isBrouillon, statut) {
       ${b.finition ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Finition :</span><span class="bpi-fv">${esc(b.finition)}</span></div>` : ''}`;
   } else {
     detailRows = `
-      ${b.produit ? `<div class="bpi-f"><span class="bpi-fl">Produit :</span><span class="bpi-fv">${esc(b.produit)}</span></div>` : ''}
       <div class="bpi-f"><span class="bpi-fl">Format :</span><span class="bpi-fv">${esc(b.formatPetit||'—')}</span></div>
-      <div class="bpi-f"><span class="bpi-fl">Papier :</span><span class="bpi-fv">${esc(b.papier||'—')}</span></div>
       <div class="bpi-f"><span class="bpi-fl">Impression :</span><span class="bpi-fv">${esc(b.impression||'—')}</span></div>
       ${b.decoupe ? `<div class="bpi-f"><span class="bpi-fl">Découpe :</span><span class="bpi-fv">${esc(b.decoupe)}</span></div>` : ''}
-      ${b.pelliculage ? `<div class="bpi-f"><span class="bpi-fl">Pelliculage :</span><span class="bpi-fv">${esc(b.pelliculage)}</span></div>` : ''}
-      ${b.plastification ? `<div class="bpi-f"><span class="bpi-fl">Plastification :</span><span class="bpi-fv">${esc(b.plastification)}</span></div>` : ''}
-      ${b.rainage ? `<div class="bpi-f"><span class="bpi-fl">Rainage :</span><span class="bpi-fv">${esc(b.rainage)}</span></div>` : ''}
-      ${b.pliage ? `<div class="bpi-f"><span class="bpi-fl">Pliage :</span><span class="bpi-fv">${esc(b.pliage)}</span></div>` : ''}
       <div class="bpi-f"><span class="bpi-fl">Qté :</span><span class="bpi-fv">${b.exemplaires||1} ex.</span></div>
-      ${b.modeles ? `<div class="bpi-f"><span class="bpi-fl">Modèles :</span><span class="bpi-fv">${b.modeles}</span></div>` : ''}
-      ${b.autre ? `<div class="bpi-f" style="grid-column:1/-1"><span class="bpi-fl">Autre :</span><span class="bpi-fv">${esc(b.autre)}</span></div>` : ''}`;
+      ${b.modeles ? `<div class="bpi-f"><span class="bpi-fl">Modèles :</span><span class="bpi-fv">${b.modeles}</span></div>` : ''}`;
   }
 
   /* Visuels */
@@ -1051,43 +904,26 @@ function sendBPIEmails(d) {
     const cat      = b.categorie || (b.type ? 'grand' : 'grand');
     const template = cat === 'petit' ? EMAILJS_TPL_PET : EMAILJS_TPL_GRD;
     const params = {
-      commande:       d.commande    || '—',
-      client:         d.client      || '—',
-      reference:      d.reference   || '—',
+      commande:     d.commande    || '—',
+      client:       d.client      || '—',
       livraison,
       expedition,
-      createur:       d.createur    || '',
-      bpi_num:        String(i + 1).padStart(2, '0'),
-      exemplaires:    String(b.exemplaires || 1),
-      modeles:        b.modeles ? String(b.modeles) : '—',
-      commentaire:    b.commentaire || '—',
-      lien:           b.lien        || '—',
-      /* Grand format */
-      matiere:        b.matiere     || '—',
-      format:         b.formatL && b.formatH ? `${b.formatL} × ${b.formatH}` : '—',
-      decoupe:        b.decoupe     || 'Aucune',
-      finitions:      (b.finitions && b.finitions.length) ? b.finitions.join(', ') : (b.finition || '—'),
-      /* Petit format */
-      produit:        b.produit       || '—',
-      format_petit:   b.formatPetit   || '—',
-      papier:         b.papier        || '—',
-      impression:     b.impression    || '—',
-      pelliculage:    b.pelliculage   || '—',
-      plastification: b.plastification || '—',
-      rainage:        b.rainage       || '—',
-      pliage:         b.pliage        || '—',
-      autre:          b.autre         || '—',
+      createur:     d.createur    || '',
+      bpi_num:      String(i + 1).padStart(2, '0'),
+      exemplaires:  String(b.exemplaires || 1),
+      modeles:      b.modeles  ? String(b.modeles) : '—',
+      commentaire:  b.commentaire || '—',
+      lien:         b.lien        || '—',
+      matiere:      b.matiere     || '—',
+      format:       b.formatL && b.formatH ? `${b.formatL} × ${b.formatH}` : '—',
+      decoupe:      b.decoupe     || 'Aucune',
+      finitions:    (b.finitions && b.finitions.length) ? b.finitions.join(', ') : (b.finition || '—'),
+      format_petit: b.formatPetit || '—',
+      impression:   b.impression  || '—',
     };
     emailjs.send(EMAILJS_SERVICE, template, params)
-      .then(() => {
-        console.log(`Email BPI #${params.bpi_num} (${cat}) envoyé`);
-        addLog('message', `📧 Email BPI #${params.bpi_num} envoyé (${cat === 'petit' ? 'Petit Format → contact@melangecom.com' : 'Grand Format → atelier@melangecom.com'}) — ${d.commande}`, d.id);
-      })
-      .catch(err => {
-        console.error('Erreur EmailJS :', err);
-        showToast(`Erreur envoi email BPI #${params.bpi_num}`);
-        addLog('suppression', `❌ Échec email BPI #${params.bpi_num} (${cat}) — ${d.commande} — ${err.text || err.message || JSON.stringify(err)}`, d.id);
-      });
+      .then(() => console.log(`Email BPI #${params.bpi_num} (${cat}) envoyé`))
+      .catch(err => { console.error('Erreur EmailJS :', err); showToast(`Erreur envoi email BPI #${params.bpi_num}`); });
   });
 }
 
@@ -1158,42 +994,16 @@ function ensureClientExists(nom) {
       .catch(() => {});
   }
 }
-/* ══════════════════════════════
-   OUVERTURE DEPUIS URL (?open=ID)
-══════════════════════════════ */
-let _urlOpenDone = false;
-function openFromURL() {
-  if (_urlOpenDone) return;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('open');
-  if (!id) return;
-  /* Réinitialiser les filtres pour que la carte soit visible */
-  resetAllFilters();
-  setTimeout(() => {
-    const card = document.getElementById('card-' + id);
-    if (!card) return;
-    _urlOpenDone = true;
-    const body = document.getElementById('body-' + id);
-    const chev = document.getElementById('chev-' + id);
-    if (body && !body.classList.contains('open')) {
-      body.classList.add('open');
-      if (chev) chev.classList.add('open');
-    }
-    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    /* Nettoyer l'URL sans recharger */
-    history.replaceState(null, '', 'dashboard.html');
-  }, 200);
-}
-
 function openNewDemande() {
-  ['d-client','d-reference','d-livraison','d-heure-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  ['d-client','d-livraison','d-heure-livraison','d-expedition','d-commentaire'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('d-commande-preview').textContent = genCmdNum();
   document.getElementById('btn-save-demande').disabled = false;
   openModal('overlay-demande');
 }
 
 function genCmdNum() {
-  const prefix = ME.login ? ME.login[0].toUpperCase() : 'X';
+  const yr = new Date().getFullYear();
+  const prefix = 'F' + yr;
   let max = 0;
   CACHE.forEach(d => {
     if (d.commande && d.commande.startsWith(prefix)) {
@@ -1201,17 +1011,16 @@ function genCmdNum() {
       if (!isNaN(n) && n > max) max = n;
     }
   });
-  return prefix + String(max + 1).padStart(3, '0');
+  return prefix + String(max + 1).padStart(2, '0');
 }
 
 function saveDemande() {
   const client      = document.getElementById('d-client').value.trim();
-  const reference   = document.getElementById('d-reference').value.trim();
   const livraison   = document.getElementById('d-livraison').value;
   const heureLiv    = document.getElementById('d-heure-livraison').value || null;
   const expedition  = document.getElementById('d-expedition').value;
   const commentaire = document.getElementById('d-commentaire').value.trim();
-  if (!client || !reference || !livraison || !expedition) { showToast('Remplir les champs obligatoires (*)'); return; }
+  if (!client || !livraison || !expedition) { showToast('Remplir les champs obligatoires (*)'); return; }
 
   const btn = document.getElementById('btn-save-demande');
   btn.disabled = true;
@@ -1224,7 +1033,7 @@ function saveDemande() {
     messages.push({ id:'m_'+(Date.now()+1), author:ME.name, email:ME.email, text:commentaire, time:new Date().toISOString() });
   }
 
-  COL.add({ client, reference, commande, livraison, heureLivraison: heureLiv, expedition, statut:'brouillon', createur:ME.name, createurEmail:ME.email, createdAt:new Date().toISOString(), bpis:[], messages })
+  COL.add({ client, commande, livraison, heureLivraison: heureLiv, expedition, statut:'brouillon', createur:ME.name, createurEmail:ME.email, createdAt:new Date().toISOString(), bpis:[], messages })
     .then(ref => {
       ensureClientExists(client);
       closeModal('overlay-demande');
@@ -1455,30 +1264,6 @@ function getSelectedFinitions() {
   return Array.from(document.querySelectorAll('input[name="bpi-finition"]:checked')).map(cb => cb.value);
 }
 
-/* ══ Petit Format — logique conditionnelle ══ */
-function onProduitChange() {
-  const produit = document.getElementById('b-produit').value;
-  const isDepli = produit === 'Dépliant';
-  document.getElementById('ff-rainage').style.display = isDepli ? '' : 'none';
-  document.getElementById('ff-pliage').style.display  = isDepli ? '' : 'none';
-  if (!isDepli) {
-    document.getElementById('b-rainage').value = '';
-    document.getElementById('b-pliage').value  = '';
-  }
-}
-
-function onPapierChange() {
-  const papier = document.getElementById('b-papier').value;
-  /* Pelliculage : 300gr ou 350gr */
-  const canPelliculage = /\b3[05][0-9]gr\b/.test(papier) || papier.includes('300') || papier.includes('350');
-  document.getElementById('ff-pelliculage').style.display = canPelliculage ? '' : 'none';
-  if (!canPelliculage) document.getElementById('b-pelliculage').value = '';
-  /* Plastification : 170gr ou 250gr */
-  const canPlastif = papier.includes('170') || papier.includes('250');
-  document.getElementById('ff-plastification-petit').style.display = canPlastif ? '' : 'none';
-  if (!canPlastif) document.getElementById('b-plastification-petit').value = '';
-}
-
 /* ══ Reset ══ */
 function resetBPIForm() {
   /* Catégorie */
@@ -1500,13 +1285,9 @@ function resetBPIForm() {
   document.getElementById('finitions-grid').innerHTML = '';
 
   /* Petit format */
-  ['b-produit','b-format-petit','b-papier','b-impression','b-decoupe-petit',
-   'b-pelliculage','b-plastification-petit','b-rainage','b-pliage','b-autre'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  ['ff-pelliculage','ff-plastification-petit','ff-rainage','ff-pliage'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.style.display = 'none';
-  });
+  document.getElementById('b-format-petit').value  = '';
+  document.getElementById('b-impression').value    = '';
+  document.getElementById('b-decoupe-petit').value = '';
 
   /* Communs */
   ['b-modeles','b-exemplaires','b-lien','b-commentaire'].forEach(id => { document.getElementById(id).value=''; });
@@ -1529,18 +1310,9 @@ function prefillBPIForm(b) {
       document.getElementById('b-matiere-grand').value  = b.matiere||'';
       buildFinitionsGrid(b.finitions||[]);
     } else {
-      document.getElementById('b-produit').value       = b.produit||'';
-      document.getElementById('b-format-petit').value  = b.formatPetit||'';
-      document.getElementById('b-papier').value        = b.papier||'';
-      document.getElementById('b-impression').value    = b.impression||'';
-      document.getElementById('b-decoupe-petit').value = b.decoupe||'';
-      onProduitChange();
-      onPapierChange();
-      document.getElementById('b-pelliculage').value           = b.pelliculage||'';
-      document.getElementById('b-plastification-petit').value  = b.plastification||'';
-      document.getElementById('b-rainage').value               = b.rainage||'';
-      document.getElementById('b-pliage').value                = b.pliage||'';
-      document.getElementById('b-autre').value                 = b.autre||'';
+      document.getElementById('b-format-petit').value   = b.formatPetit||'';
+      document.getElementById('b-impression').value     = b.impression||'';
+      document.getElementById('b-decoupe-petit').value  = b.decoupe||'';
     }
   }
   document.getElementById('b-modeles').value      = b.modeles||'';
@@ -1580,22 +1352,12 @@ function saveBPI() {
       finitions: getSelectedFinitions()
     };
   } else {
-    const produit     = document.getElementById('b-produit').value;
     const formatPetit = document.getElementById('b-format-petit').value;
-    const papier      = document.getElementById('b-papier').value;
     const impression  = document.getElementById('b-impression').value;
-    if (!produit) { showToast('Choisir le produit.'); return; }
-    if (!formatPetit) { showToast('Choisir le format.'); return; }
-    if (!papier) { showToast('Choisir le type de papier.'); return; }
-    if (!impression) { showToast('Choisir le type d\'impression.'); return; }
+    if (!formatPetit||!impression) { showToast('Choisir le format et le type d\'impression.'); return; }
     specific = {
-      produit, formatPetit, papier, impression,
-      decoupe:        document.getElementById('b-decoupe-petit').value || '',
-      pelliculage:    document.getElementById('b-pelliculage').value || '',
-      plastification: document.getElementById('b-plastification-petit').value || '',
-      rainage:        document.getElementById('b-rainage').value.trim() || '',
-      pliage:         document.getElementById('b-pliage').value.trim() || '',
-      autre:          document.getElementById('b-autre').value.trim() || '',
+      formatPetit, impression,
+      decoupe: document.getElementById('b-decoupe-petit').value
     };
   }
 
@@ -1963,18 +1725,9 @@ function printBPI(demandeId, bpiId) {
       </div>
 
       ${b.categorie === 'petit' ? `
-      ${b.produit ? `
-      <div class="field-block">
-        <span class="field-lbl">Produit</span>
-        <span class="field-val f-lg">${b.produit}</span>
-      </div>` : ''}
       <div class="field-block">
         <span class="field-lbl">Format</span>
         <span class="field-val f-lg">${b.formatPetit||'—'}</span>
-      </div>
-      <div class="field-block">
-        <span class="field-lbl">Papier</span>
-        <span class="field-val f-md">${b.papier||'—'}</span>
       </div>
       <div class="field-block">
         <span class="field-lbl">Impression</span>
@@ -1984,31 +1737,6 @@ function printBPI(demandeId, bpiId) {
       <div class="field-block">
         <span class="field-lbl">Découpe</span>
         <span class="field-val f-sm">${b.decoupe}</span>
-      </div>` : ''}
-      ${b.pelliculage ? `
-      <div class="field-block">
-        <span class="field-lbl">Pelliculage</span>
-        <span class="field-val f-sm">${b.pelliculage}</span>
-      </div>` : ''}
-      ${b.plastification ? `
-      <div class="field-block">
-        <span class="field-lbl">Plastification</span>
-        <span class="field-val f-sm">${b.plastification}</span>
-      </div>` : ''}
-      ${b.rainage ? `
-      <div class="field-block">
-        <span class="field-lbl">Rainage</span>
-        <span class="field-val f-sm">${b.rainage}</span>
-      </div>` : ''}
-      ${b.pliage ? `
-      <div class="field-block">
-        <span class="field-lbl">Pliage</span>
-        <span class="field-val f-sm">${b.pliage}</span>
-      </div>` : ''}
-      ${b.autre ? `
-      <div class="field-block">
-        <span class="field-lbl">Autre</span>
-        <span class="field-val f-sm">${b.autre}</span>
       </div>` : ''}
       ` : `
       <div class="field-block">
@@ -2089,7 +1817,7 @@ function printBPI(demandeId, bpiId) {
                      alt=""/>
                 <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:#333;text-align:center;line-height:1.2;white-space:nowrap;flex-shrink:0;">
                   ${b.categorie === 'petit'
-                    ? `${b.produit||''} ${b.formatPetit||'—'} · ${b.papier||''}`
+                    ? `${b.formatPetit||'—'} · ${b.impression||''}`
                     : `${b.formatL||'—'} × ${b.formatH||'—'}`} · <strong>${b.exemplaires} ex.</strong>
                 </div>
               </div>`;
